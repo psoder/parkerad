@@ -1,0 +1,14 @@
+.review {
+  background-color: var(--secondary);
+  display: grid;
+  grid-template-columns: 300px 1fr;
+}
+
+.review > div  {
+  padding: 1rem;
+}
+
+.coordinates {
+  color: var(--primary);
+  text-decoration: underline;
+}
