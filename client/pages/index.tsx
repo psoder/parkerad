@@ -15,38 +15,52 @@ const Home: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <section id="intro" className={styles.intro}>
-        <div className={styles.title}>
-          <h1>Parkerad</h1>
-          <h2>A very catchy slogan about benches</h2>
-        </div>
-
-        <Link href="/#benches">
-          <Image
-            src="/icons/arrow-down.png"
-            width={64}
-            height={64}
-            alt="down arrow"
-            layout="fixed"
-            className={styles.downArrow}
-          />
-        </Link>
-      </section>
-
-      <section id="benches" className={styles.benches}>
-        <h1>Bänkar</h1>
-        <div>
-          some feature here
-        </div>
-        <div className={styles.benchList}>
-          <Bench />
-          <Bench />
-          <Bench />
-        </div>
-      </section>
+      <Intro />
+      <Benches />
 
       <Footer />
     </div>
+  );
+};
+
+const Intro = () => {
+  return (
+    <section id="intro" className={styles.intro}>
+      <div className={styles.title}>
+        <h1>Parkerad</h1>
+        <h2>A very catchy slogan about benches</h2>
+      </div>
+
+      <Link href="/#benches">
+        <Image
+          src="/icons/arrow-down.png"
+          width={64}
+          height={64}
+          alt="down arrow"
+          layout="fixed"
+          className={styles.downArrow}
+        />
+      </Link>
+    </section>
+  );
+};
+
+const Benches = () => {
+  return (
+    <section id="benches" className={styles.benches}>
+      <h1>Bänkar</h1>
+      <div>some feature here</div>
+      <div className={styles.benchList}>
+        <Bench />
+        <Bench />
+        <Bench />
+        <Bench />
+        <Bench />
+        <Bench />
+        <Bench />
+        <Bench />
+      </div>
+    </section>
   );
 };
 
