@@ -20,15 +20,6 @@ const Benches = () => {
       {benchReviews?.map(br => 
         <Bench key={br.bench.id} bench={br.bench} reviews={br.reviews} />
       )}
-
-      {/* {myCollection.map((member) => (
-        <div key={member} className={myCondition ? styles.variant1 : styles.variant2}>
-          {member}
-        </div>
-      ))} */}
-
-      {/* <Bench bench={{}} reviews={[]}  /> */}
-      {/* {benchReviews?.[  at(0)?.bench.description} */}
     </div>
   );
 };

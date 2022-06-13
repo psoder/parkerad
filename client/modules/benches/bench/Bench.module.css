@@ -1,7 +1,8 @@
 .review {
   background-color: var(--secondary);
   display: grid;
-  grid-template-columns: 300px 1fr;
+  grid-template-columns: 1fr;
+  box-shadow: var(--box-shadow);
 }
 
 .review > div  {
@@ -11,4 +12,8 @@
 .coordinates {
   color: var(--primary);
   text-decoration: underline;
+}
+
+.userReview {
+  
 }
