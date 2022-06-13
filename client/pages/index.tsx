@@ -2,7 +2,7 @@ import type { NextPage } from "next";
 import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";
-import Bench from "../components/bench/Bench";
+import Benches from "../modules/benches/Benches";
 import Footer from "../modules/footer/Footer";
 import styles from "../styles/Home.module.css";
 
@@ -16,7 +16,7 @@ const Home: NextPage = () => {
       </Head>
 
       <Intro />
-      <Benches />
+      <BenchSection />
 
       <Footer />
     </div>
@@ -45,20 +45,13 @@ const Intro = () => {
   );
 };
 
-const Benches = () => {
+const BenchSection = () => {
   return (
     <section id="benches" className={styles.benches}>
       <h1>Bänkar</h1>
       <div>some feature here</div>
       <div className={styles.benchList}>
-        <Bench />
-        <Bench />
-        <Bench />
-        <Bench />
-        <Bench />
-        <Bench />
-        <Bench />
-        <Bench />
+        <Benches />
       </div>
     </section>
   );
