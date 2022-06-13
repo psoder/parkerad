@@ -4,30 +4,38 @@ import parkerad.model.*
 
 class BenchDB {
 
-    private val users = mapOf(0 to User("Adam Degen"), 1 to User("Snöderlund"))
+    private val users = mapOf(0 to User(0, "Adam Degen"), 1 to User(1, "Snöderlund"))
 
-    private val benches =
-            mapOf(
-                    0 to Bench("Fippelistan0", 0.0, 0.0, "A very nice place0", "no img0"),
-                    1 to Bench("Fippelistan1", 1.0, 1.0, "A very nice place1", "no img1"),
-                    2 to Bench("Fippelistan2", 2.0, 2.0, "A very nice place2", "no img2")
+    private val reviews = listOf(
+                    Review(0, 3.0, "Acceptable", users[0]!!),
+                    Review(1, 5.0, "Excellent", users[1]!!),
+                    Review(2, 2.0, "Eh", users[1]!!)
             )
 
-    private val reviews = mapOf(
-                    0 to Review(3.0, benches[0]!!, "Acceptable", users[0]!!),
-                    1 to Review(5.0, benches[1]!!, "Excellent", users[1]!!),
-                    2 to Review(2.0, benches[0]!!, "Eh", users[1]!!)
+    private val benches = listOf(
+                    Bench(0, "Fippelistan0", 0.0, 0.0, "A very nice place0"),
+                    Bench(1, "Fippelistan1", 1.0, 1.0, "A very nice place1"),
+                    Bench(2, "Fippelistan2", 2.0, 2.0, "A very nice place2")
             )
 
-    fun getBench(id: Int): Bench? = benches[id]
+    private val benchReviews: List<BenchReview> = listOf(
+                    BenchReview(benches[0], listOf(reviews[0], reviews[1])),
+                    BenchReview(benches[1], listOf(reviews[2])),
+                    BenchReview(benches[2], listOf())
+            )
 
-    fun getBenches(): List<Bench> = benches.values.toList()
+    fun getBench(benchId: Int): Bench? = benches[benchId]
 
-    fun getReview(id: Int): Review? = reviews[id]
+    fun getBenches(): List<Bench> = benches
 
-    fun getReviews(): List<Review> = reviews.values.toList()
+    fun getReview(reviewId: Int): Review? = reviews[reviewId]
 
-    fun reviewsForBench(id: Int): List<Review> {
-        return reviews.filter { it.key.equals(id) }.values.toList()
+    fun getReviews(): List<Review> = reviews
+
+    fun getBenchReview(benchId: Int): BenchReview? {
+        return benchReviews.find { it.bench.id.equals(benchId) }
     }
+
+    fun getBenchReviews(): List<BenchReview> = benchReviews
+
 }

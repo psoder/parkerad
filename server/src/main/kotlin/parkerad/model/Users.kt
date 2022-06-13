@@ -1,3 +1,3 @@
 package parkerad.model
 
-class User(val name: String)
+class User(val id: Int, val name: String)

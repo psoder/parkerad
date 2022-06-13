@@ -13,11 +13,12 @@ class BenchController {
 
     @GetMapping("/reviews") fun getReview(): List<Review> = benchDB.getReviews()
 
+    @GetMapping("/benchReviews") fun getBenchReviews(): List<BenchReview> = benchDB.getBenchReviews()
+
     @GetMapping("/benches/{id}") fun getBench(@PathVariable id: Int): Bench? = benchDB.getBench(id)
     
     @GetMapping("/reviews/{id}") fun getReview(@PathVariable id: Int): Review? = benchDB.getReview(id)
 
+    @GetMapping("/benchReview/{id}") fun getBenchReview(@PathVariable id: Int): BenchReview? = benchDB.getBenchReview(id)
 
-    @GetMapping("/benches/{id}/reviews")
-    fun getBenchReviews(@PathVariable id: Int): List<Review> = benchDB.reviewsForBench(id)
 }
