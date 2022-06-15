@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { Review, BenchReview} from "../../types/BenchTypes";
-import { api } from "../../utils/utils";
+import { Review, BenchReview} from "types/BenchTypes";
+import { api } from "utils/utils";
 import Bench from "./bench/Bench";
 import styles from "./Benches.module.css"
 
@@ -23,5 +23,7 @@ const Benches = () => {
     </div>
   );
 };
+
+Benches.getInitalProps = (props: any) => {};
 
 export default Benches;

@@ -1,7 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { BenchReview, Review } from "../../../types/BenchTypes";
-import { User } from "../../../types/UserTypes";
+import { BenchReview, Review } from "types/BenchTypes";
 import styles from "./Bench.module.css";
 
 const Bench = ({
