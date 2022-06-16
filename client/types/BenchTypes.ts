@@ -1,13 +1,13 @@
 import { User } from "./UserTypes";
 
-export interface Review {
+export type Review = {
   id: number;
   rating: number;
   text: string;
   user: User;
 }
 
-export interface Bench {
+export type Bench = {
   id: number;
   location: string;
   longitude: number;
@@ -16,7 +16,7 @@ export interface Bench {
   image?: string;
 }
 
-export interface BenchReview {
+export type BenchReview =  {
   bench: Bench;
   reviews: Review[];
 }

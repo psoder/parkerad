@@ -4,6 +4,11 @@ import { api } from "utils/utils";
 import Bench from "./bench/Bench";
 import styles from "./Benches.module.css"
 
+export async function getServerSideProps(context) {
+  return {
+    props: {}, // will be passed to the page component as props
+  };
+}
 
 const Benches = () => {
   const [benchReviews, setBenchReviews] = useState<BenchReview[]>();
