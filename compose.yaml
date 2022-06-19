@@ -1,15 +1,22 @@
 version: "3.1"
 services:
-  # web:
-
-  # backend:
-  #   image: server
-  #   restart: always
-  #   ports:
-  #     - 8008:8080
+  web:
+    build:
+      context: ./client
+      dockerfile: next.Dockerfile
+    container_name: web
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./client:/next
+      - /next/node_modules
+      - /next/.next
 
   mongo:
-    build: ./db
+    build:
+      context: ./db
+      dockerfile: db.Dockerfile
     restart: unless-stopped
     environment:
       - MONGO_INITDB_ROOT_USERNAME:${MONGO_ROOT_USER}
