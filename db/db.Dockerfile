@@ -1,3 +1,3 @@
 FROM mongo:5
 
-CMD ["mongod"]
+CMD ["mongod", "--replSet", "rs0"]

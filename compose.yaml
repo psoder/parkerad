@@ -1,11 +1,9 @@
-version: "3.1"
+version: "3.8"
 services:
   web:
     build:
       context: ./client
       dockerfile: next.Dockerfile
-    container_name: web
-    restart: unless-stopped
     ports:
       - "3000:3000"
     volumes:
@@ -13,30 +11,64 @@ services:
       - /next/node_modules
       - /next/.next
 
-  mongo:
-    build:
-      context: ./db
-      dockerfile: db.Dockerfile
-    restart: unless-stopped
-    environment:
-      - MONGO_INITDB_ROOT_USERNAME:${MONGO_ROOT_USER}
-      - MONGO_INITDB_ROOT_PASSWORD:${MONGO_ROOT_PASSWORD}
-    volumes:
-      - db-data:/data/db
+  # mongo-express:
+  #   image: mongo-express:latest
+  #   depends_on:
+  #     - mongodb-primary
+  #   restart: "no"
+  #   ports:
+  #     - 8081:8081
+  #   environment:
+      # ME_CONFIG_MONGODB_URL: mongodb://$MONGO_ROOT_USER:$MONGO_ROOT_PASSWORD@mongodb-primary,mongodb-secondary:27017,mongodb-arbiter:27017/?authSource=admin&replicaSet=replicaset
+      # ME_CONFIG_MONGODB_URL: mongodb://$MONGO_ROOT_USER:$MONGO_ROOT_PASSWORD@mongodb-primary:27017/?authSource=admin
+
+  mongodb-primary:
+    image: bitnami/mongodb:5.0
     ports:
       - 27017:27017
-
-  mongo-express:
-    image: mongo-express
-    depends_on:
-      - mongo
-    restart: unless-stopped
-    ports:
-      - 8081:8081
+    volumes:
+      - ./db/data:/bitnami/mongodb
+    extra_hosts:
+      host.docker.internal: host-gateway
     environment:
-      - ME_CONFIG_MONGODB_ADMINUSERNAME:${MONGOEXPRESS_LOGIN}
-      - ME_CONFIG_MONGODB_ADMINPASSWORD:${MONGOEXPRESS_PASSWORD}
-      - ME_CONFIG_MONGODB_URL':mongodb://${MONGOEXPRESS_LOGIN}:{MONGOEXPRESS_PASSWORD}@mongo:27017/
+      MONGODB_ADVERTISED_HOSTNAME: host.docker.internal
+      MONGODB_ROOT_USER: ${MONGO_ROOT_USER}
+      MONGODB_ROOT_PASSWORD: ${MONGO_ROOT_PASSWORD}
+      MONGODB_REPLICA_SET_MODE: primary
+      MONGODB_REPLICA_SET_KEY: replicasetkey123
 
-volumes:
-  db-data:
+  mongodb-secondary:
+    image: "bitnami/mongodb:5.0"
+    depends_on:
+      - mongodb-primary
+    ports:
+      - 27018:27017
+    extra_hosts:
+      host.docker.internal: host-gateway
+    environment:
+      MONGODB_ADVERTISED_HOSTNAME: mongodb-secondary
+      MONGODB_REPLICA_SET_MODE: secondary
+      MONGODB_INITIAL_PRIMARY_HOST: mongodb-primary
+      MONGODB_INITIAL_PRIMARY_PORT_NUMBER: 27017
+      MONGODB_INITIAL_PRIMARY_ROOT_PASSWORD: $MONGO_ROOT_PASSWORD
+      MONGODB_REPLICA_SET_KEY: replicasetkey123
+
+  mongodb-arbiter:
+    image: "bitnami/mongodb:5.0"
+    depends_on:
+      - mongodb-primary
+    ports:
+      - 27019:27017
+    extra_hosts:
+      host.docker.internal: host-gateway
+    environment:
+      MONGODB_ADVERTISED_HOSTNAME: mongodb-arbiter
+      MONGODB_REPLICA_SET_MODE: arbiter
+      MONGODB_INITIAL_PRIMARY_HOST: mongodb-primary
+      MONGODB_INITIAL_PRIMARY_PORT_NUMBER: 27017
+      MONGODB_INITIAL_PRIMARY_ROOT_PASSWORD: $MONGO_ROOT_PASSWORD
+      MONGODB_REPLICA_SET_KEY: replicasetkey123
+      
+# volumes:
+#   db-data:
+#     driver: local
