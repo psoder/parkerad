@@ -1,15 +1,20 @@
-import clientPromise from "lib/mongodb";
-import type { NextPage } from "next";
+import type {
+  GetServerSideProps,
+  InferGetServerSidePropsType,
+  NextPage,
+} from "next";
 import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";
-import Benches from "modules/benches/Benches";
+import Location from "modules/locations/Location";
 import Footer from "modules/footer/Footer";
 import styles from "styles/Home.module.css";
 import prisma from "lib/prisma";
 
-const Home: NextPage = ({ users }) => {
-  console.log(users);
+const Home: NextPage = ({
+  locations,
+}: InferGetServerSidePropsType<typeof getServerSideProps>) => {
+  console.log(locations);
 
   return (
     <div className={styles.container}>
@@ -19,82 +24,62 @@ const Home: NextPage = ({ users }) => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <Intro />
-      <BenchSection />
+      <section id="intro" className={styles.intro}>
+        <div className={styles.title}>
+          <h1>Parkerad</h1>
+          <h2>A very catchy slogan about benches</h2>
+        </div>
+
+        <Link href="/#locations">
+          <Image
+            src="/icons/arrow-down.png"
+            width={64}
+            height={64}
+            alt="down arrow"
+            layout="fixed"
+            className={styles.downArrow}
+          />
+        </Link>
+      </section>
+
+      <section id="locations" className={styles.locations}>
+        <h1>Bänkar</h1>
+        <div className={styles.locationList}>
+          <Location locations={locations} />
+        </div>
+      </section>
 
       <Footer />
     </div>
   );
 };
 
-const Intro = () => {
-  return (
-    <section id="intro" className={styles.intro}>
-      <div className={styles.title}>
-        <h1>Parkerad</h1>
-        <h2>A very catchy slogan about benches</h2>
-      </div>
-
-      <Link href="/#benches">
-        <Image
-          src="/icons/arrow-down.png"
-          width={64}
-          height={64}
-          alt="down arrow"
-          layout="fixed"
-          className={styles.downArrow}
-        />
-      </Link>
-    </section>
-  );
-};
-
-const BenchSection = () => {
-  return (
-    <section id="benches" className={styles.benches}>
-      <h1>Bänkar</h1>
-      <div>some feature here</div>
-      <div className={styles.benchList}>
-        <Benches />
-      </div>
-    </section>
-  );
-};
-
-export async function getServerSideProps() {
+export const getServerSideProps: GetServerSideProps = async (context) => {
   // await prisma.user.create({
   //   data: {
-  //     name: "Rich",
-  //     email: "hello@prisma.com",
-  //     posts: {
-  //       create: {
-  //         title: "My first post",
-  //         body: "Lots of really interesting stuff",
-  //         slug: "my-first-post",
-  //       },
-  //     },
+  //     username: "Snöderlund",
   //   },
   // });
 
-  // const users = await prisma.user.findMany();
+  // await prisma.location.create({
+  //   data: {
+  //     locationName: "Trippeln",
+  //     description: "Tre bänkar vid västra Lappkärret",
+  //     location: {
+  //       coordinates: [59.3689071, 18.0672525],
+  //     },
+  //     noRatings: 1,
+  //     averageRating: 4.2,
+  //   },
+  // });
+
+  const locations = await prisma.location.findMany({ take: 10 });
+
+  console.log(locations);
 
   return {
-    props: { users:true },
+    props: { locations: JSON.parse(JSON.stringify(locations)) },
   };
-
-  // try {
-
-  //   // await prisma.$connect();
-
-  //   // return {
-  //   //   props: { users: users },
-  //   // };
-  // } catch (e) {
-  //   console.error(e);
-  //   return {
-  //     props: { users: null },
-  //   };
-  // }
-}
+};
 
 export default Home;

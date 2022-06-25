@@ -10,28 +10,39 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Post {
-  id String @id @default(auto()) @map("_id") @db.ObjectId
-  slug String @unique
-  title String
-  body String
-  comments Comment[]
-  author User @relation(fields: [authorId], references: [id])
-  authorId String @db.ObjectId
-}
-
-// Comments contain a comment string and connect back to the post.
-// postId must have @db.ObjectId to match up with Post's id type
-model Comment {
-  id String @id @default(auto()) @map("_id") @db.ObjectId
-  post Post @relation(fields: [postId], references: [id])
-  postId String @db.ObjectId
-  comment String
-}
-
 model User {
-  id String @id @default(auto()) @map("_id") @db.ObjectId
-  email String @unique
-  name String?
-  posts Post[]
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  username    String   @unique
+  dateCreated DateTime @default(now()) @map("date_created")
+  reviews     Review[]
+}
+
+model Location {
+  id            String      @id @default(auto()) @map("_id") @db.ObjectId
+  locationName  String      @unique @map("location_name")
+  description   String?
+  location      Coordinates
+  dateAdded     DateTime    @default(now()) @map("date_added")
+  image         String      @default("/placeholder-bench.jpg")
+  noRatings     Int         @map("no_ratings")
+  averageRating Float
+  recentReviews Review[]
+}
+
+model Review {
+  id         String    @id @default(auto()) @map("_id") @db.ObjectId
+  location   Location  @relation(fields: [locationId], references: [id])
+  locationId String    @map("location_id") @db.ObjectId
+  user       User      @relation(fields: [userId], references: [id])
+  userId     String    @map("user_id") @db.ObjectId
+  reviewDate DateTime  @default(now()) @map("review_date")
+  rating     Int
+  comment    String?
+  editDate   DateTime? @map("edit_date")
+
+}
+
+type Coordinates {
+  type        String  @default("Point")
+  coordinates Float[]
 }

@@ -23,6 +23,8 @@ services:
 
   mongodb-primary:
     image: bitnami/mongodb:5.0
+    ports:
+      - 27017:27017
     environment:
       MONGODB_ADVERTISED_HOSTNAME: mongodb-primary
       MONGODB_REPLICA_SET_MODE: primary
@@ -55,7 +57,6 @@ services:
       MONGODB_INITIAL_PRIMARY_PORT_NUMBER: 27017
       MONGODB_INITIAL_PRIMARY_ROOT_PASSWORD: ${MONGO_ROOT_PASSWORD}
       MONGODB_REPLICA_SET_KEY: replicasetkey123
-
 
 volumes:
   parkerad-dev-data:
