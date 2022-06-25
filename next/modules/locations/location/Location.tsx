@@ -3,7 +3,7 @@ import Link from "next/link";
 import { BenchReview, Review } from "types/BenchTypes";
 import styles from "./Bench.module.css";
 
-const Bench = ({
+const Location = ({
   bench: { location, longitude, latitude, description, image },
   reviews,
 }: BenchReview) => {
@@ -58,4 +58,4 @@ const UserReview = ({ rating, text, user }: Review) => {
   );
 };
 
-export default Bench;
+export default Location;
