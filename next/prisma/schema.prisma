@@ -15,6 +15,8 @@ model User {
   username    String   @unique
   dateCreated DateTime @default(now()) @map("date_created")
   reviews     Review[]
+
+  @@map("user")
 }
 
 model Location {
@@ -27,6 +29,8 @@ model Location {
   noRatings     Int         @map("no_ratings")
   averageRating Float
   recentReviews Review[]
+
+  @@map("location")
 }
 
 model Review {
@@ -40,6 +44,7 @@ model Review {
   comment    String?
   editDate   DateTime? @map("edit_date")
 
+  @@map("review")
 }
 
 type Coordinates {

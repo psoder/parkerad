@@ -6,14 +6,13 @@ import type {
 import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";
-import Location from "modules/locations/Location";
+import Locations from "modules/locations/Locations";
 import Footer from "modules/footer/Footer";
 import styles from "styles/Home.module.css";
 import prisma from "lib/prisma";
+import type { Location } from "@prisma/client";
 
-const Home: NextPage = ({
-  locations,
-}: InferGetServerSidePropsType<typeof getServerSideProps>) => {
+const Home: NextPage = ({ locations }: any) => {
   console.log(locations);
 
   return (
@@ -45,7 +44,7 @@ const Home: NextPage = ({
       <section id="locations" className={styles.locations}>
         <h1>Bänkar</h1>
         <div className={styles.locationList}>
-          <Location locations={locations} />
+          <Locations locations={locations as Location[]} />
         </div>
       </section>
 
@@ -73,12 +72,13 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   //   },
   // });
 
-  const locations = await prisma.location.findMany({ take: 10 });
+  const locations: Location[] = await prisma.location.findMany({ take: 10 });
 
   console.log(locations);
 
   return {
     props: { locations: JSON.parse(JSON.stringify(locations)) },
+    // props: { fippel: true },
   };
 };
 
