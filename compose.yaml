@@ -1,0 +1,75 @@
+version: "3.8"
+services:
+  web:
+    build:
+      context: ./next
+      dockerfile: next.Dockerfile
+    networks:
+      - parkerad
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./next:/next
+      - /next/node_modules
+      - /next/.next
+
+  mongo-express:
+    image: mongo-express:latest
+    depends_on:
+      - mongodb-primary
+    restart: "always"
+    networks:
+      - parkerad
+    ports:
+      - 8081:8081
+    environment:
+      ME_CONFIG_MONGODB_URL: mongodb://$MONGO_ROOT_USER:$MONGO_ROOT_PASSWORD@mongodb-primary:27017,mongodb-secondary:27017,mongodb-arbiter:27017/?authSource=admin&replicaSet=replicaset
+
+  mongodb-primary:
+    image: bitnami/mongodb:5.0
+    ports:
+      - 27017:27017
+    networks:
+      - parkerad
+    volumes:
+      - parkerad-dev-db:/bitnami/mongodb
+    environment:
+      MONGODB_ADVERTISED_HOSTNAME: mongodb-primary
+      MONGODB_REPLICA_SET_MODE: primary
+      MONGODB_ROOT_USER: ${MONGO_ROOT_USER}
+      MONGODB_ROOT_PASSWORD: ${MONGO_ROOT_PASSWORD}
+      MONGODB_REPLICA_SET_KEY: replicasetkey123
+
+  mongodb-secondary:
+    image: bitnami/mongodb:5.0
+    depends_on:
+      - mongodb-primary
+    networks:
+      - parkerad
+    environment:
+      MONGODB_ADVERTISED_HOSTNAME: mongodb-secondary
+      MONGODB_REPLICA_SET_MODE: secondary
+      MONGODB_INITIAL_PRIMARY_HOST: mongodb-primary
+      MONGODB_INITIAL_PRIMARY_PORT_NUMBER: 27017
+      MONGODB_INITIAL_PRIMARY_ROOT_PASSWORD: ${MONGO_ROOT_PASSWORD}
+      MONGODB_REPLICA_SET_KEY: replicasetkey123
+
+  mongodb-arbiter:
+    image: bitnami/mongodb:5.0
+    depends_on:
+      - mongodb-primary
+    networks:
+      - parkerad
+    environment:
+      MONGODB_ADVERTISED_HOSTNAME: mongodb-arbiter
+      MONGODB_REPLICA_SET_MODE: arbiter
+      MONGODB_INITIAL_PRIMARY_HOST: mongodb-primary
+      MONGODB_INITIAL_PRIMARY_PORT_NUMBER: 27017
+      MONGODB_INITIAL_PRIMARY_ROOT_PASSWORD: ${MONGO_ROOT_PASSWORD}
+      MONGODB_REPLICA_SET_KEY: replicasetkey123
+
+volumes:
+  parkerad-dev-db:
+
+networks:
+  parkerad:

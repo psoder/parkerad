@@ -1,1 +1,6 @@
 # gitignore
+.env*
+!.env*.example
+db/data/
+*.log
+*fippel*
