@@ -4,6 +4,8 @@ services:
     build:
       context: ./next
       dockerfile: next.Dockerfile
+    networks:
+      - parkerad
     ports:
       - "3000:3000"
     volumes:
@@ -16,6 +18,8 @@ services:
     depends_on:
       - mongodb-primary
     restart: "always"
+    networks:
+      - parkerad
     ports:
       - 8081:8081
     environment:
@@ -25,19 +29,23 @@ services:
     image: bitnami/mongodb:5.0
     ports:
       - 27017:27017
+    networks:
+      - parkerad
+    volumes:
+      - parkerad-dev-db:/bitnami/mongodb
     environment:
       MONGODB_ADVERTISED_HOSTNAME: mongodb-primary
       MONGODB_REPLICA_SET_MODE: primary
       MONGODB_ROOT_USER: ${MONGO_ROOT_USER}
       MONGODB_ROOT_PASSWORD: ${MONGO_ROOT_PASSWORD}
       MONGODB_REPLICA_SET_KEY: replicasetkey123
-    volumes:
-      - parkerad-dev-data:/bitnami
 
   mongodb-secondary:
     image: bitnami/mongodb:5.0
     depends_on:
       - mongodb-primary
+    networks:
+      - parkerad
     environment:
       MONGODB_ADVERTISED_HOSTNAME: mongodb-secondary
       MONGODB_REPLICA_SET_MODE: secondary
@@ -50,6 +58,8 @@ services:
     image: bitnami/mongodb:5.0
     depends_on:
       - mongodb-primary
+    networks:
+      - parkerad
     environment:
       MONGODB_ADVERTISED_HOSTNAME: mongodb-arbiter
       MONGODB_REPLICA_SET_MODE: arbiter
@@ -59,5 +69,7 @@ services:
       MONGODB_REPLICA_SET_KEY: replicasetkey123
 
 volumes:
-  parkerad-dev-data:
-    driver: local
+  parkerad-dev-db:
+
+networks:
+  parkerad:
