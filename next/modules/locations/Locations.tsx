@@ -1,20 +1,18 @@
-import { useEffect, useState } from "react";
-import { Review, BenchReview } from "types/BenchTypes";
 import LocationComp from "./location/Location";
 import styles from "./Location.module.css";
-import type { Location } from "@prisma/client";
+import { LocationReview } from "types/LocationReview";
 
-interface props {
-  locations: Location[];
+interface LocationsProps {
+  locations: LocationReview[];
 }
 
-const Locations = ({ locations }: props) => {
+const Locations = ({ locations }: LocationsProps) => {
   return (
     <>
       <h2>Some feature here</h2>
       <div className={styles.benchList}>
-        {locations?.map((loc) => (
-          <LocationComp location={loc} />
+        {locations?.map((location) => (
+          <LocationComp key={location.id} location={location} />
         ))}
       </div>
     </>
