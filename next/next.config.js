@@ -8,6 +8,9 @@ const nextConfig = {
     return config;
   },
   reactStrictMode: true,
+  images: {
+    domains: [process.env.IMG_DOMAIN],
+  },
 };
 
 module.exports = nextConfig;

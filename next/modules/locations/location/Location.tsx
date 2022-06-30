@@ -1,32 +1,41 @@
 import Image from "next/image";
 import Link from "next/link";
-import { BenchReview, Review } from "types/BenchTypes";
 import styles from "./Bench.module.css";
+import { LocationReview, UserReview } from "types/LocationReview";
+import { Review, User } from "@prisma/client";
 
-const Location = ({
-  bench: { location, longitude, latitude, description, image },
-  reviews,
-}: BenchReview) => {
-  let coords = `https://maps.google.com/?q=${longitude},${latitude}`;
+interface LocationProps {
+  location: LocationReview;
+}
 
-  let averageRating = 4.2;
+const LocationComponent = ({ location }: LocationProps) => {
+  const reviews = location.reviews;
+
+  let lat = location.coordinates.coordinates[0];
+  let long = location.coordinates.coordinates[1];
+  let mapLink = `https://maps.google.com/?q=${lat},${long}`;
+
+  const avgRating: number =
+    reviews
+      .map((review) => review.rating)
+      .reduce((acc, rating) => acc + rating, 0) / reviews.length;
 
   return (
     <div className={styles.review}>
       <Image
+        src={location.image!}
         alt="image location"
-        width={500}
+        width={250}
         height={250}
-        src={image ?? "/images/bench.jpg"}
       />
-      
+
       <div>
-        <h2>{location}</h2>
+        <h2>{location.locationName}</h2>
         <div className={styles.content}>
-          <div>Average Rating: {averageRating}</div>
+          <div>Average Rating: {avgRating.toFixed(1)}</div>
           <div>
-            Location: {description ?? "No description available"} (
-            <Link href={coords} className={styles.coordinates}>
+            Location: {location.description ?? "No description available"} (
+            <Link href={mapLink} className={styles.coordinates}>
               View on map
             </Link>
             )
@@ -35,13 +44,7 @@ const Location = ({
           <h3>User Reviews</h3>
           <div>
             {reviews.map((review) => (
-              <UserReview
-                key={review.id}
-                id={review.id}
-                rating={review.rating}
-                text={review.text}
-                user={review.user}
-              />
+              <Review key={review.id} review={review} user={review.user} />
             ))}
           </div>
         </div>
@@ -50,12 +53,18 @@ const Location = ({
   );
 };
 
-const UserReview = ({ rating, text, user }: Review) => {
+interface ReviewProps {
+  review: Review;
+  user: User;
+}
+
+const Review = ({ review, user }: ReviewProps) => {
   return (
     <div className={styles.userReview}>
-      Rating: {rating}, Comment: &quot;{text}&quot; by {user.name}
+      Rating: {review.rating}, Comment: &quot;{review.comment}&quot; by{" "}
+      {user.username}
     </div>
   );
 };
 
-export default Location;
+export default LocationComponent;

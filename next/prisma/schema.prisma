@@ -13,20 +13,23 @@ datasource db {
 model User {
   id          String   @id @default(auto()) @map("_id") @db.ObjectId
   username    String   @unique
+  email       String   @unique
   dateCreated DateTime @default(now()) @map("date_created")
   reviews     Review[]
+
+  @@map("user")
 }
 
 model Location {
-  id            String      @id @default(auto()) @map("_id") @db.ObjectId
-  locationName  String      @unique @map("location_name")
-  description   String?
-  location      Coordinates
-  dateAdded     DateTime    @default(now()) @map("date_added")
-  image         String      @default("/placeholder-bench.jpg")
-  noRatings     Int         @map("no_ratings")
-  averageRating Float
-  recentReviews Review[]
+  id           String      @id @default(auto()) @map("_id") @db.ObjectId
+  locationName String      @unique @map("location_name")
+  description  String?
+  coordinates  Coordinates
+  dateAdded    DateTime    @default(now()) @map("date_added")
+  image        String?
+  reviews      Review[]
+
+  @@map("location")
 }
 
 model Review {
@@ -40,6 +43,7 @@ model Review {
   comment    String?
   editDate   DateTime? @map("edit_date")
 
+  @@map("review")
 }
 
 type Coordinates {

@@ -1,23 +1,19 @@
-import { useEffect, useState } from "react";
-import { Review, BenchReview } from "types/BenchTypes";
-import Location from "./location/Location";
+import LocationComp from "./location/Location";
 import styles from "./Location.module.css";
+import { LocationReview } from "types/LocationReview";
 
-interface BenchProps {
-  locations: Location[];
+interface LocationsProps {
+  locations: LocationReview[];
 }
 
-const Locations = ({ locations }: BenchProps) => {
-  const [benchReviews, setBenchReviews] = useState();
-
+const Locations = ({ locations }: LocationsProps) => {
   return (
     <>
       <h2>Some feature here</h2>
       <div className={styles.benchList}>
-        {/* {benchReviews?.map((br) => (
-        <Bench key={br.bench.id} bench={br.bench} reviews={br.reviews} />
-      ))} */}
-        benchlist
+        {locations?.map((location) => (
+          <LocationComp key={location.id} location={location} />
+        ))}
       </div>
     </>
   );
