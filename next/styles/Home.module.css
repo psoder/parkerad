@@ -1,7 +1,5 @@
-.container {}
-
 .container > section {
-  padding: 0 20% 0 20%;
+  padding: 0 15% 0 15%;
   min-height: 100vh;
   padding-top: 5%;
   padding-bottom: 5%;

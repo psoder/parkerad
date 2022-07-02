@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import styles from "./Bench.module.css";
+import styles from "./Location.module.css";
 import { LocationReview, UserReview } from "types/LocationReview";
 import { Review, User } from "@prisma/client";
 
@@ -21,27 +21,35 @@ const LocationComponent = ({ location }: LocationProps) => {
       .reduce((acc, rating) => acc + rating, 0) / reviews.length;
 
   return (
-    <div className={styles.review}>
-      <Image
-        src={location.image!}
-        alt="image location"
-        width={250}
-        height={250}
-      />
+    <article className={styles.location}>
+      <div className={styles.imageContainer}>
+        <Image
+          src={location.image!}
+          alt="image location"
+          layout={"fixed"}
+          // objectFit={""}
+          // objectPosition={"cover"}
+          width={256}
+          height={256}
+        />
+      </div>
 
-      <div>
-        <h2>{location.locationName}</h2>
+      <div className={styles.reviews}>
+        <div className={styles.header}>
+          <h2>{location.locationName}</h2>
+          <h2>{avgRating.toFixed(1)} / 5</h2>
+        </div>
+
         <div className={styles.content}>
-          <div>Average Rating: {avgRating.toFixed(1)}</div>
-          <div>
-            Location: {location.description ?? "No description available"} (
-            <Link href={mapLink} className={styles.coordinates}>
-              View on map
-            </Link>
-            )
-          </div>
+          <p className={styles.description}>
+            {location.description ?? "No description available."}
+          </p>
 
-          <h3>User Reviews</h3>
+          <Link href={mapLink} className={styles.coordinates}>
+            View on map
+          </Link>
+
+          <h3>User Reviews ({reviews.length})</h3>
           <div>
             {reviews.map((review) => (
               <Review key={review.id} review={review} user={review.user} />
@@ -49,7 +57,7 @@ const LocationComponent = ({ location }: LocationProps) => {
           </div>
         </div>
       </div>
-    </div>
+    </article>
   );
 };
 
@@ -63,6 +71,7 @@ const Review = ({ review, user }: ReviewProps) => {
     <div className={styles.userReview}>
       Rating: {review.rating}, Comment: &quot;{review.comment}&quot; by{" "}
       {user.username}
+      <h1 className="text-3xl font-bold underline">Hello world!</h1>
     </div>
   );
 };
