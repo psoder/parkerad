@@ -70,6 +70,7 @@ export const getServerSideProps: GetServerSideProps = async () => {
               create: {
                 username: "Snöderlund",
                 email: "sno@derlund.com",
+                role: "ADMIN",
               },
             },
           },
@@ -147,20 +148,46 @@ export const getServerSideProps: GetServerSideProps = async () => {
       },
     };
 
-    prisma.location.create({
+    let location4: Prisma.LocationCreateInput = {
+      locationName: "Barrösund",
+      coordinates: {
+        coordinates: [59.926174, 23.86255],
+      },
+      reviews: {
+        create: [
+          {
+            rating: 5,
+            comment: "10/10",
+            user: {
+              create: {
+                username: "Snöderlund",
+                email: "sno@derlund.com",
+                role: "ADMIN",
+              },
+            },
+          },
+        ],
+      },
+    };
+
+    await prisma.location.create({
       data: location1,
     });
 
-    prisma.location.create({
+    await prisma.location.create({
       data: location2,
     });
 
-    prisma.location.create({
+    await prisma.location.create({
       data: location3,
+    });
+
+    await prisma.location.create({
+      data: location4,
     });
   };
 
-  // await createSampleData()
+  // await createSampleData();
 
   const locations = await prisma.location.findMany({
     take: 10,
@@ -174,11 +201,10 @@ export const getServerSideProps: GetServerSideProps = async () => {
   });
 
   locations.map((location) => {
-    if (location.image == null) {
-      location.image = "/images/bench.jpg"
-    } else {
-      location.image = `${process.env.IMG_SRC}/${location.image}`
-    }
+    location.image =
+      location.image == null
+        ? (location.image = "/images/bench.jpg")
+        : (location.image = `${process.env.IMG_SRC}/${location.image}`);
   });
 
   return {
