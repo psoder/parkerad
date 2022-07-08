@@ -51,6 +51,7 @@ function StarBar({
 
         ul {
           display: flex;
+          list-style-type: none;
           flex-direction: ${direction};
         }
       `}</style>

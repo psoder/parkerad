@@ -2,7 +2,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { LocationReview } from "types/LocationReview";
 import { Review, User } from "@prisma/client";
-import StarBar from "components/starbar/StarBar";
+import StarBar from "components/StarBar";
+import { colors, shadows } from "theme/Styles";
 
 interface LocationProps {
   location: LocationReview;
@@ -119,7 +120,7 @@ const LocationComponent = ({ location }: LocationProps) => {
             }
 
             .buttons > button {
-              background-color: var(--primary);
+              background-color: ${colors.primary};
               padding: 8px;
             }
 
@@ -144,10 +145,10 @@ const LocationComponent = ({ location }: LocationProps) => {
       <style jsx>
         {`
           article {
-            background-color: var(--secondary);
+            background-color: ${colors.secondary};
             display: grid;
             grid-template-columns: auto 1fr;
-            box-shadow: var(--box-shadow);
+            box-shadow: ${shadows.boxShadow};
           }
 
           article > div {
