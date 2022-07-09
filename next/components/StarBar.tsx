@@ -7,7 +7,7 @@ type StarBarProps = {
   rounding: number;
   color: Color;
   direction: "row" | "column";
-  size: number;
+  size: `${number}rem` | `${number}px`;
 };
 
 StarBar.defaultProps = {
@@ -16,7 +16,7 @@ StarBar.defaultProps = {
   rounding: 0,
   color: "#FFFF00",
   direction: "row",
-  size: 1,
+  size: "1rem",
 };
 
 function StarBar({
@@ -38,15 +38,17 @@ function StarBar({
   return (
     <>
       <ul>
-        {starlist.map((star) => {
-          return <li>{star}</li>;
+        {starlist.map((star, i) => {
+          return <li key={i}>{star}</li>;
         })}{" "}
       </ul>
 
       <style jsx>{`
         * {
           color: ${color};
-          font-size: ${size}rem;
+          font-size: ${size};
+          margin: 0;
+          padding: 0;
         }
 
         ul {
