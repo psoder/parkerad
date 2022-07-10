@@ -1,17 +1,34 @@
 import Location from "components/Location";
 import { LocationReview } from "types/LocationReview";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { getComparitor, Comparitor } from "utils/LocationReviewUtils";
 
-interface LocationsProps {
-  locations: LocationReview[];
-}
-
-const Locations = ({ locations }: LocationsProps) => {
-  const [filterInput, setInput] = useState<string>("");
+const Locations = ({ locations }: { locations: LocationReview[] }) => {
+  const [fslocations, setFSLocations] = useState(locations);
+  const [search, setSearch] = useState<{
+    filter: string;
+    comparitor: Comparitor;
+  }>({
+    filter: "",
+    comparitor: Comparitor.RATING,
+  });
 
   const handleChange = (e: any) => {
-    setInput(e.target.value);
+    setSearch({
+      ...search,
+      [e.target.name]: e.target.value,
+    });
   };
+
+  useEffect(() => {
+    setFSLocations(
+      locations
+        .filter((location) => {
+          return location.locationName.match(search.filter);
+        })
+        .sort(getComparitor(search.comparitor)).reverse()
+    );
+  }, [search]);
 
   return (
     <section id="locations">
@@ -21,10 +38,62 @@ const Locations = ({ locations }: LocationsProps) => {
         <h2>Filter Locations</h2>
         <form>
           <label>
-            Filter:
-            <input type="text" value={filterInput} onChange={handleChange} />
+            Search for locations
+            <input
+              type="text"
+              name={"filter"}
+              value={search.filter}
+              onChange={handleChange}
+            />
           </label>
         </form>
+
+        <div>
+          <h2>Sort Locations</h2>
+          <form className="sorting">
+            <label>
+              <input
+                type={"radio"}
+                name={"comparitor"}
+                onChange={handleChange}
+                checked={search.comparitor === Comparitor.DATE_ADDED}
+                value={Comparitor.DATE_ADDED}
+                disabled={true}
+              />
+              Date Added
+            </label>
+            <label>
+              <input
+                type={"radio"}
+                name={"comparitor"}
+                onChange={handleChange}
+                checked={search.comparitor === Comparitor.RATING}
+                value={Comparitor.RATING}
+              />
+              Rating
+            </label>
+            <label>
+              <input
+                type={"radio"}
+                name={"comparitor"}
+                onChange={handleChange}
+                checked={search.comparitor === Comparitor.WEIGHTED_RATING}
+                value={Comparitor.WEIGHTED_RATING}
+              />
+              Weighted rating
+            </label>
+            <label>
+              <input
+                type={"radio"}
+                name={"comparitor"}
+                onChange={handleChange}
+                checked={search.comparitor === Comparitor.NO_RATINGS}
+                value={Comparitor.NO_RATINGS}
+              />
+              No. Ratings
+            </label>
+          </form>
+        </div>
 
         <style jsx>{`
           div {
@@ -44,27 +113,34 @@ const Locations = ({ locations }: LocationsProps) => {
             display: grid;
             grid-template-columns: 1fr;
           }
+
+          .sorting {
+            display: flex;
+            flex-direction: column;
+          }
+
+          .sorting > label {
+            display: flex;
+          }
+
+          .sorting input {
+            margin: 0;
+            background-color: red;
+          }
         `}</style>
       </div>
 
       <div className="locations">
-        {locations?.map((location) => (
+        {fslocations.map((location) => (
           <Location key={location.id} location={location} />
         ))}
 
         <style jsx>
           {`
             .locations {
-              display: grid;
-              grid-template-columns: 1fr;
-              flex-direction: column;
+              display: flex;
+              flex-wrap: wrap;
               gap: 1.5rem;
-            }
-
-            @media (min-width: 1000px) {
-              .locations {
-                grid-template-columns: 1fr 1fr;
-              }
             }
           `}
         </style>

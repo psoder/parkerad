@@ -6,3 +6,7 @@ export function api<T>(url: string): Promise<T> {
     return response.json() as Promise<T>;
   });
 }
+
+export const dateSort = (a: Date, b: Date) => {
+  return a.getTime() - b.getTime();
+};
