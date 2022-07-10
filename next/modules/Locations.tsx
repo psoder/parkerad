@@ -26,7 +26,8 @@ const Locations = ({ locations }: { locations: LocationReview[] }) => {
         .filter((location) => {
           return location.locationName.match(search.filter);
         })
-        .sort(getComparitor(search.comparitor)).reverse()
+        .sort(getComparitor(search.comparitor))
+        .reverse()
     );
   }, [search]);
 
@@ -51,47 +52,37 @@ const Locations = ({ locations }: { locations: LocationReview[] }) => {
         <div>
           <h2>Sort Locations</h2>
           <form className="sorting">
-            <label>
-              <input
-                type={"radio"}
-                name={"comparitor"}
-                onChange={handleChange}
-                checked={search.comparitor === Comparitor.DATE_ADDED}
-                value={Comparitor.DATE_ADDED}
-                disabled={true}
-              />
-              Date Added
-            </label>
-            <label>
-              <input
-                type={"radio"}
-                name={"comparitor"}
-                onChange={handleChange}
-                checked={search.comparitor === Comparitor.RATING}
-                value={Comparitor.RATING}
-              />
-              Rating
-            </label>
-            <label>
-              <input
-                type={"radio"}
-                name={"comparitor"}
-                onChange={handleChange}
-                checked={search.comparitor === Comparitor.WEIGHTED_RATING}
-                value={Comparitor.WEIGHTED_RATING}
-              />
-              Weighted rating
-            </label>
-            <label>
-              <input
-                type={"radio"}
-                name={"comparitor"}
-                onChange={handleChange}
-                checked={search.comparitor === Comparitor.NO_RATINGS}
-                value={Comparitor.NO_RATINGS}
-              />
-              No. Ratings
-            </label>
+            <RadioButton
+              caption={"Rating"}
+              name={"comparitor"}
+              onChange={handleChange}
+              checked={search.comparitor === Comparitor.RATING}
+              value={Comparitor.RATING}
+            />
+
+            <RadioButton
+              caption={"Weighted rating"}
+              name={"comparitor"}
+              onChange={handleChange}
+              checked={search.comparitor === Comparitor.WEIGHTED_RATING}
+              value={Comparitor.WEIGHTED_RATING}
+            />
+
+            <RadioButton
+              caption={"Date Added"}
+              name={"comparitor"}
+              onChange={handleChange}
+              checked={search.comparitor === Comparitor.DATE_ADDED}
+              value={Comparitor.DATE_ADDED}
+            />
+
+            <RadioButton
+              name={"comparitor"}
+              caption={"No. Ratings"}
+              onChange={handleChange}
+              checked={search.comparitor === Comparitor.NO_RATINGS}
+              value={Comparitor.NO_RATINGS}
+            />
           </form>
         </div>
 
@@ -104,29 +95,6 @@ const Locations = ({ locations }: { locations: LocationReview[] }) => {
             color: black;
           }
 
-          label {
-            display: flex;
-            flex-direction: column;
-          }
-
-          form {
-            display: grid;
-            grid-template-columns: 1fr;
-          }
-
-          .sorting {
-            display: flex;
-            flex-direction: column;
-          }
-
-          .sorting > label {
-            display: flex;
-          }
-
-          .sorting input {
-            margin: 0;
-            background-color: red;
-          }
         `}</style>
       </div>
 
@@ -146,6 +114,35 @@ const Locations = ({ locations }: { locations: LocationReview[] }) => {
         </style>
       </div>
     </section>
+  );
+};
+
+const RadioButton = ({
+  caption = "No caption.",
+  name = "",
+  checked = false,
+  value = "",
+  onChange = null,
+}: {
+  caption?: string;
+  name?: string;
+  checked?: boolean;
+  value?: any;
+  onChange?: any;
+}) => {
+  return (
+    <label>
+      <input
+        type={"radio"}
+        name={name}
+        onChange={onChange}
+        checked={checked}
+        value={value}
+      />
+      {caption}
+
+      <style jsx>{``}</style>
+    </label>
   );
 };
 
