@@ -2,10 +2,12 @@ import Image from "next/image";
 import Link from "next/link";
 import { LocationReview } from "types/LocationReview";
 import StarBar from "components/StarBar";
-import { borders, colors, shadows } from "theme/Styles";
+import { borders, colors, shadows, stdUnits } from "theme/Styles";
 import * as utils from "utils/LocationReviewUtils";
 import { useState } from "react";
 import ReviewCard from "./ReviewCard";
+
+const stdPx = stdUnits.px;
 
 const LocationComponent = ({ location }: { location: LocationReview }) => {
   const [renderOverlay, setRenderOverlay] = useState(false);
@@ -76,7 +78,7 @@ const MinimalLocation = ({
             box-shadow: ${shadows.boxShadow};
             display: flex;
             flex-direction: column;
-            width: 400px;
+            width: ${25 * stdPx}px;
           }
 
           .content {
@@ -86,7 +88,7 @@ const MinimalLocation = ({
               "title rating"
               "review review";
             grid-template-rows: auto 3rem;
-            gap: 1.5rem;
+            gap: ${stdPx}px;
 
             padding: 5%;
           }
@@ -125,34 +127,38 @@ const LocationOverlay = ({
   return (
     <>
       <div className="overlay">
-        <button  className="button" onClick={handleChange}>close</button>
-
         <div className="content">
-          <div style={{ gridArea: "image" }}>
+          <div className="image" style={{ gridArea: "image" }}>
+            <button className="button" onClick={handleChange}>
+              close
+            </button>
+
             <Image
               src={location.image!}
               alt="image location"
-              layout={"responsive"}
-              width={256}
-              height={256}
+              layout={"intrinsic"}
+              width={400}
+              height={300}
             />
           </div>
 
-          <h1 className="locationName">{location.locationName}</h1>
+          <div style={{ gridArea: "titleDescription" }}>
+            <h1 className="locationName">{location.locationName}</h1>
 
-          <p className="description">
-            {location.description != null ? (
-              <>{location.description}</>
-            ) : (
-              "No description available."
-            )}
-            <br />
-            View on{" "}
-            <Link href={mapLink}>
-              <a>map</a>
-            </Link>
-            .
-          </p>
+            <p className="description">
+              {location.description != null ? (
+                <>{location.description}</>
+              ) : (
+                "No description available."
+              )}
+              <br />
+              View on{" "}
+              <Link href={mapLink}>
+                <a>map</a>
+              </Link>
+              .
+            </p>
+          </div>
 
           <div className="leaveReview">
             <h2>Leave a review</h2>
@@ -161,29 +167,33 @@ const LocationOverlay = ({
             <button>Review</button>
           </div>
 
-          <h2 className="reviewHeading">Reviews ({reviews.length})</h2>
+          <div className="reviews" style={{ gridArea: "reviews" }}>
+            <h2 style={{ gridArea: "reviewTitle" }}>
+              Reviews ({reviews.length})
+            </h2>
 
-          <div style={{ gridArea: "rating", justifySelf: "end" }}>
-            {reviews.length == 0 ? (
-              <>? / 5</>
-            ) : (
-              <StarBar
-                initalStars={utils.averageRating(location)}
-                size={`${titleSize / 2}rem`}
-              />
-            )}
-          </div>
-
-          <div className="reviews">
-            {reviews.map((review) => {
-              return (
-                <ReviewCard
-                  key={review.id}
-                  review={review}
-                  user={review.user}
+            <div style={{ gridArea: "rating", justifySelf: "end" }}>
+              {reviews.length == 0 ? (
+                <>? / 5</>
+              ) : (
+                <StarBar
+                  initalStars={utils.averageRating(location)}
+                  size={`${titleSize / 2}rem`}
                 />
-              );
-            })}
+              )}
+            </div>
+
+            <div className="reviewContainer">
+              {reviews.map((review) => {
+                return (
+                  <ReviewCard
+                    key={review.id}
+                    review={review}
+                    user={review.user}
+                  />
+                );
+              })}
+            </div>
           </div>
         </div>
       </div>
@@ -194,75 +204,70 @@ const LocationOverlay = ({
           padding: 0;
         }
 
-        .close {
-          grid-area: close;
-          position: relative;
-          top: 0;
-          right: 0;
-          justift-self: end;
-          width: 50px;
-          hegight: 50px;
-        }
-
         .overlay {
           position: fixed;
           width: 100vw;
-          min-height: 100vh;
+          height: 100vh;
           top: 0;
           left: 0;
           z-index: 1;
+          background-color: ${colors.darkTint};
 
           display: flex;
+          flex-direction: column;
           justify-content: center;
-          background-color: ${colors.darkTint};
+
+          padding: 5%;
+          padding-left: 25%;
+          padding-right: 25%;
         }
 
         .content {
-          margin: 15%;
           background-color: ${colors.secondary};
           box-shadow: ${shadows.boxShadow};
-
           display: grid;
           grid-template-areas:
-            "name image"
-            "desc image"
+            "titleDescription image"
             "leaveReview leaveReview"
-            "review  rating"
             "reviews reviews";
 
           grid-template-columns: 1fr 2fr;
-
-          gap: 32px;
-          padding: 3rem;
         }
 
-        .locationName {
-          grid-area: name;
+        .content > *:not(:first-child) {
+          padding: ${2 * stdPx}px;
         }
-
-        .image {
-          grid-area: image;
-        }
-
-        .description {
-          grid-area: desc;
-        }
-
-        .leaveReview {
-          grid-area: leaveReview;
-        }
-
         .reviewHeading {
-          grid-area: review;
           font-size: ${0.5 * titleSize}rem;
         }
 
+        .image {
+          position: relative;
+          display: grid;
+          justify-content: end;
+        }
+
+        .button {
+          position: absolute;
+          right: ${stdPx}px;
+          top: ${stdPx}px;
+          z-index: 1;
+        }
+
         .reviews {
-          grid-area: reviews;
+          display: grid;
+          gap: ${0.5 * stdPx}px;
+          grid-template-areas:
+            "reviewTitle rating"
+            "reviewContainer reviewContainer";
+        }
+
+        .reviewContainer {
+          grid-area: "reviewContainer";
           display: flex;
+          gap: ${stdPx}px;
           flex-wrap: wrap;
           justify-content: space-between;
-          gap: 2rem;
         }
       `}</style>
     </>

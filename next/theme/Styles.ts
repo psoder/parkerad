@@ -11,6 +11,10 @@ export const colors = {
   darkTint: "rgba(0, 0, 0, 0.5)" as Color,
 };
 
+export const stdUnits = {
+  px: 16,
+};
+
 export const shadows = {
   boxShadow: "5px 5px 5px rgb(57, 57, 57)",
 };

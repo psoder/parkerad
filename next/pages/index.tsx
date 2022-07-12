@@ -141,7 +141,7 @@ export const getServerSideProps: GetServerSideProps = async () => {
     };
 
     let location4: Prisma.LocationCreateInput = {
-      locationName: "Barrösund",
+      locationName: "Barösund",
       coordinates: {
         coordinates: [59.926174, 23.86255],
       },

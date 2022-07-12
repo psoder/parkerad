@@ -55,7 +55,9 @@ export function getComparitor(
 
     case Comparitor.DATE_ADDED:
       return (a: LocationReview, b: LocationReview) => {
-        return a.dateAdded.getTime() - b.dateAdded.getTime();
+        return (
+          new Date(a.dateAdded).getTime() - new Date(b.dateAdded).getTime()
+        );
       };
   }
 }

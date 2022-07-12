@@ -7,6 +7,6 @@ export function api<T>(url: string): Promise<T> {
   });
 }
 
-export const dateSort = (a: Date, b: Date) => {
+export const dateComparitor = (a: Date, b: Date) => {
   return a.getTime() - b.getTime();
 };

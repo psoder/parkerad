@@ -35,7 +35,7 @@ const Locations = ({ locations }: { locations: LocationReview[] }) => {
     <section id="locations">
       <h1>Bänkar</h1>
 
-      <div>
+      <div className="filter">
         <h2>Filter Locations</h2>
         <form>
           <label>
@@ -47,11 +47,8 @@ const Locations = ({ locations }: { locations: LocationReview[] }) => {
               onChange={handleChange}
             />
           </label>
-        </form>
 
-        <div>
-          <h2>Sort Locations</h2>
-          <form className="sorting">
+          <div>
             <RadioButton
               caption={"Rating"}
               name={"comparitor"}
@@ -83,18 +80,23 @@ const Locations = ({ locations }: { locations: LocationReview[] }) => {
               checked={search.comparitor === Comparitor.NO_RATINGS}
               value={Comparitor.NO_RATINGS}
             />
-          </form>
-        </div>
+          </div>
+        </form>
 
         <style jsx>{`
-          div {
-            margin-bottom: 2rem;
+          .filter {
+            margin-bottom: 3%;
+          }
+
+          form {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
           }
 
           input {
             color: black;
           }
-
         `}</style>
       </div>
 

@@ -12,14 +12,16 @@ const Intro = () => {
 
       <div>
         <Link href="/#locations">
-          <Image
-            src="/icons/arrow-down.png"
-            width={64}
-            height={64}
-            alt="down arrow"
-            layout="fixed"
-            style={{ filter: "invert(66%)" }}
-          />
+          <a>
+            <Image
+              src="/icons/arrow-down.png"
+              width={64}
+              height={64}
+              alt="down arrow"
+              layout="fixed"
+              style={{ filter: "invert(66%)" }}
+            />
+          </a>
         </Link>
       </div>
 
