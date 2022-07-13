@@ -1,10 +1,25 @@
+import { Prisma, Review } from "@prisma/client";
 import type { NextApiRequest, NextApiResponse } from "next";
-import { Review } from "types/BenchTypes";
-import { reviews } from "utils/fippel";
+import prisma from "lib/prisma";
 
-export default function handler(
+export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<Review>
+  res: NextApiResponse<Review | { message: string }>
 ) {
-  res.status(200).json(reviews[+req.query.id]);
+  const id = req.query.id;
+
+  let review = await prisma.review
+    .findUnique({
+      where: { id: id as string },
+      include: { location: {}, user: {} },
+    })
+    .catch((reason: any) => {
+      res.status(400).json(reason);
+    });
+
+  if (review == null) {
+    res.status(404).json({ message: `No review with id, '${id}', exists` });
+  } else {
+    res.status(200).json(review);
+  }
 }

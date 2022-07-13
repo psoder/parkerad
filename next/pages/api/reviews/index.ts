@@ -1,10 +1,13 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import { Review } from "types/BenchTypes";
-import { reviews } from "utils/fippel";
+import prisma from "lib/prisma";
 
-export default function handler(
+export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<Review[]>
+  res: NextApiResponse
 ) {
-  res.status(200).json(reviews);
+  res
+    .status(200)
+    .json(
+      await prisma.review.findMany({ include: { location: {}, user: {} } })
+    );
 }

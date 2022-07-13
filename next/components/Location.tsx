@@ -6,6 +6,7 @@ import { borders, colors, shadows, stdUnits } from "theme/Styles";
 import * as utils from "utils/LocationReviewUtils";
 import { useState } from "react";
 import ReviewCard from "./ReviewCard";
+import { Location, Review } from "@prisma/client";
 
 const stdPx = stdUnits.px;
 
@@ -160,12 +161,7 @@ const LocationOverlay = ({
             </p>
           </div>
 
-          <div className="leaveReview">
-            <h2>Leave a review</h2>
-            <input type="text"></input>
-            <input type="number"></input>
-            <button>Review</button>
-          </div>
+          <LeaveReview location={location} />
 
           <div className="reviews" style={{ gridArea: "reviews" }}>
             <h2 style={{ gridArea: "reviewTitle" }}>
@@ -271,6 +267,80 @@ const LocationOverlay = ({
         }
       `}</style>
     </>
+  );
+};
+
+const LeaveReview = ({ location }: { location: Location }) => {
+  const [state, setState] = useState<{
+    userId: string;
+    rating: number;
+    comment?: string;
+  }>({ rating: 0, userId: "anon" });
+
+  const handleChange = (event: any) => {
+    setState({
+      ...state,
+      [event.target.name]: event.target.value,
+    });
+  };
+
+  const handleSubmit = (event: any) => {
+    event.preventDefault();
+    fetch("/api/reviews/create", {
+      method: "POST",
+      body: JSON.stringify({ locationId: location.id, ...state }),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data)
+      });
+  };
+
+  return (
+    <div className="root">
+      <h2>Leave a review</h2>
+      <form onSubmit={handleSubmit}>
+        <label>
+          Score
+          <input
+            type="number"
+            value={state?.rating}
+            onChange={handleChange}
+            name="rating"
+          />
+        </label>
+
+        <label>
+          Comment (Optional)
+          <input
+            type="text"
+            value={state?.comment || ""}
+            onChange={handleChange}
+            name="comment"
+          />
+        </label>
+
+        <input type="submit" value="Submit" />
+      </form>
+      <style jsx>{`
+        * {
+          margin: 0;
+        }
+        .root {
+          margin-left: ${2 * stdPx}px;
+        }
+
+        form {
+          display: flex;
+          flex-direction: column;
+        }
+
+        label {
+          display: flex;
+          flex-direction: column;
+        }
+      `}</style>
+    </div>
   );
 };
 

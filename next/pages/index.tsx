@@ -151,10 +151,15 @@ export const getServerSideProps: GetServerSideProps = async () => {
             rating: 5,
             comment: "10/10",
             user: {
-              create: {
-                username: "Snöderlund",
-                email: "sno@derlund.com",
-                role: "ADMIN",
+              connectOrCreate: {
+                where: {
+                  username: "Snöderlund",
+                },
+                create: {
+                  username: "Snöderlund",
+                  email: "sno@derlund.com",
+                  role: "ADMIN",
+                },
               },
             },
           },
