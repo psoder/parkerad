@@ -1,8 +1,12 @@
+import { Review } from "@prisma/client";
 import type { NextApiRequest, NextApiResponse } from "next";
+import prisma from "lib/prisma";
+
+type Response = Review | { message: string };
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<Review>
+  res: NextApiResponse<Response>
 ) {
   const { body } = req.body;
   const id = req.query.id as string;
