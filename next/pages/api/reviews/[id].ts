@@ -33,6 +33,29 @@ export default async function handler(
       }
       break;
 
+    // case "PUT":
+    //   {
+    //     const review = await prisma.review.findFirst();
+
+    //     const rating = body.rating as number;
+    //     const comment = body.comment as string;
+
+    //     if (body.locationId == null && body.userId != null) {
+    //       // Create
+    //       res.status(409).json({ message: "" });
+    //     } else {
+    //       await prisma.review.update({
+    //         where: { id: id as string },
+    //         data: { editDate: new Date(), rating: rating, comment: comment },
+    //       });
+    //     }
+    //   }
+    //   break;
+
+    // case "DELETE":
+    //   await prisma.review.delete({ where: { id: id as string } });
+    //   break;
+
     default:
       res.status(405).json({
         message: `Method, '${req.method}', is not allowed for this endpoint`,
