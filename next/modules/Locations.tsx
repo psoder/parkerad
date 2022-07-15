@@ -2,6 +2,7 @@ import Location from "components/Location";
 import { LocationReview } from "types/LocationReview";
 import { useEffect, useState } from "react";
 import { getComparitor, Comparitor } from "utils/LocationReviewUtils";
+import { colors, stdUnits } from "theme/Styles";
 
 const Locations = ({ locations }: { locations: LocationReview[] }) => {
   const [fslocations, setFSLocations] = useState(locations);
@@ -33,61 +34,35 @@ const Locations = ({ locations }: { locations: LocationReview[] }) => {
 
   return (
     <section id="locations">
-      <h1>Bänkar</h1>
+      <h1>Locations</h1>
 
       <div className="filter">
         <h2>Filter Locations</h2>
         <form>
-          <label>
-            Search for locations
-            <input
-              type="text"
-              name={"filter"}
-              value={search.filter}
-              onChange={handleChange}
-            />
-          </label>
-
-          <div>
-            <RadioButton
-              caption={"Rating"}
-              name={"comparitor"}
-              onChange={handleChange}
-              checked={search.comparitor === Comparitor.RATING}
-              value={Comparitor.RATING}
-            />
-
-            <RadioButton
-              caption={"Weighted rating"}
-              name={"comparitor"}
-              onChange={handleChange}
-              checked={search.comparitor === Comparitor.WEIGHTED_RATING}
-              value={Comparitor.WEIGHTED_RATING}
-            />
-
-            <RadioButton
-              caption={"Date Added"}
-              name={"comparitor"}
-              onChange={handleChange}
-              checked={search.comparitor === Comparitor.DATE_ADDED}
-              value={Comparitor.DATE_ADDED}
-            />
-
-            <RadioButton
-              name={"comparitor"}
-              caption={"No. Ratings"}
-              onChange={handleChange}
-              checked={search.comparitor === Comparitor.NO_RATINGS}
-              value={Comparitor.NO_RATINGS}
-            />
-          </div>
+          <input
+            type="text"
+            name={"filter"}
+            value={search.filter}
+            onChange={handleChange}
+          />
         </form>
+
+        <h2>Sort Locations</h2>
+        <select onChange={handleChange} name={"comparitor"}>
+          <option value={Comparitor.RATING}> Rating</option>
+          <option value={Comparitor.WEIGHTED_RATING}>Weighted rating</option>
+          <option value={Comparitor.DATE_ADDED}> Date Added</option>
+          <option value={Comparitor.NO_RATINGS}> No. Ratings</option>
+        </select>
 
         <style jsx>{`
           .filter {
-            margin-bottom: 3%;
+            margin-bottom: ${2 * stdUnits.px}px;
           }
 
+          h2 {
+            margin-bottom: 0;
+          }
           form {
             display: flex;
             flex-direction: column;
@@ -95,7 +70,7 @@ const Locations = ({ locations }: { locations: LocationReview[] }) => {
           }
 
           input {
-            color: black;
+            color: ${colors.dark};
           }
         `}</style>
       </div>
@@ -116,35 +91,6 @@ const Locations = ({ locations }: { locations: LocationReview[] }) => {
         </style>
       </div>
     </section>
-  );
-};
-
-const RadioButton = ({
-  caption = "No caption.",
-  name = "",
-  checked = false,
-  value = "",
-  onChange = null,
-}: {
-  caption?: string;
-  name?: string;
-  checked?: boolean;
-  value?: any;
-  onChange?: any;
-}) => {
-  return (
-    <label>
-      <input
-        type={"radio"}
-        name={name}
-        onChange={onChange}
-        checked={checked}
-        value={value}
-      />
-      {caption}
-
-      <style jsx>{``}</style>
-    </label>
   );
 };
 
