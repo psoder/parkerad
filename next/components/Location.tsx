@@ -168,7 +168,13 @@ const LocationOverlay = ({
               Reviews ({reviews.length})
             </h2>
 
-            <div style={{ gridArea: "rating", justifySelf: "end" }}>
+            <div
+              style={{
+                gridArea: "rating",
+                justifySelf: "end",
+                alignSelf: "center",
+              }}
+            >
               {reviews.length == 0 ? (
                 <>? / 5</>
               ) : (
@@ -275,7 +281,7 @@ const LeaveReview = ({ location }: { location: Location }) => {
     userId: string;
     rating: number;
     comment?: string;
-  }>({ rating: 0, userId: "anon" });
+  }>({ rating: 0, userId: "62c73201b531ed4aa8190c5e" });
 
   const handleChange = (event: any) => {
     setState({
@@ -292,7 +298,7 @@ const LeaveReview = ({ location }: { location: Location }) => {
     })
       .then((res) => res.json())
       .then((data) => {
-        console.log(data)
+        console.log(data);
       });
   };
 
@@ -300,15 +306,12 @@ const LeaveReview = ({ location }: { location: Location }) => {
     <div className="root">
       <h2>Leave a review</h2>
       <form onSubmit={handleSubmit}>
-        <label>
-          Score
-          <input
-            type="number"
-            value={state?.rating}
-            onChange={handleChange}
-            name="rating"
-          />
-        </label>
+        <StarBar
+          editable={true}
+          onChange={(value: number) => {
+            setState({ ...state, rating: value });
+          }}
+        />
 
         <label>
           Comment (Optional)

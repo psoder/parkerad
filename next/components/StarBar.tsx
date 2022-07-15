@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Color } from "types/ColorTypes";
 
 function StarBar({
@@ -8,6 +8,8 @@ function StarBar({
   color = "#FFFF00",
   direction = "row",
   size = "1rem",
+  editable = false,
+  onChange = () => {},
 }: {
   maxStars?: number;
   initalStars?: number;
@@ -15,32 +17,41 @@ function StarBar({
   color?: Color;
   direction?: "row" | "column";
   size?: `${number}rem` | `${number}px`;
+  editable?: boolean;
+  onChange?: (value: number) => (any | void);
 }) {
-  const [stars, setStars] = useState<number>(initalStars!);
+  const [stars, setStars] = useState(initalStars!);
+  const [hoverStars, setHoverStars] = useState(initalStars);
+  const [isSettingStars, setIsSettingStars] = useState(false);
 
-  let starlist = Array(Math.floor(stars % (maxStars + 1)))
-    .fill("")
-    .map((_, i) => {
-      return <Star fill={1} />;
-    });
+  let starlist = Array(maxStars).fill(0);
 
-  if ((stars % (maxStars + 1)) - Math.floor(stars % (maxStars + 1)) > 0) {
-    starlist.push(
-      <Star
-        fill={(stars % (maxStars + 1)) - Math.floor(stars % (maxStars + 1))}
-      />
-    );
-  }
-
-  while (maxStars > starlist.length) {
-    starlist.push(<Star fill={0} />);
-  }
+  useEffect(() => {
+    onChange(stars);
+  }, [stars]);
 
   return (
     <>
-      <ul>
-        {starlist.map((star, i) => {
-          return <li key={i}>{star}</li>;
+      <ul
+        onMouseEnter={() => {
+          setIsSettingStars(true);
+        }}
+        onMouseLeave={() => {
+          setIsSettingStars(false);
+        }}
+      >
+        {starlist.map((_, i) => {
+          return (
+            <li key={i}>
+              <Star
+                fill={(isSettingStars && editable ? hoverStars : stars) - i}
+                value={i + 1}
+                handleClick={editable ? setStars : () => {}}
+                handleMouseEnter={setHoverStars}
+                handleMouseLeave={setHoverStars}
+              />
+            </li>
+          );
         })}{" "}
       </ul>
       <style jsx>{`
@@ -66,11 +77,19 @@ const Star = ({
   outlineColor = "#2C3E50",
   fillColor = "#FFFF00",
   size = 24,
+  value = -1,
+  handleClick,
+  handleMouseEnter,
+  handleMouseLeave,
 }: {
   fill?: number;
   outlineColor?: Color;
   fillColor?: Color;
   size?: number;
+  value?: number;
+  handleClick?: any;
+  handleMouseEnter?: any;
+  handleMouseLeave?: any;
 }) => {
   if (fill > 1) {
     fill = 1;
@@ -79,7 +98,17 @@ const Star = ({
   }
 
   return (
-    <>
+    <div
+      onClick={() => {
+        handleClick(value);
+      }}
+      onMouseEnter={() => {
+        handleMouseEnter(value);
+      }}
+      onMouseLeave={() => {
+        handleMouseLeave(value);
+      }}
+    >
       <svg
         xmlns="http://www.w3.org/2000/svg"
         width={size}
@@ -97,13 +126,19 @@ const Star = ({
             <stop offset="0" stopColor="transparent" />
           </linearGradient>
         </defs>
-        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
         <path
           fill={`url(#grad-${fill})`}
           d="M12 17.75l-6.172 3.245l1.179 -6.873l-5 -4.867l6.9 -1l3.086 -6.253l3.086 6.253l6.9 1l-5 4.867l1.179 6.873z"
         />
       </svg>
-    </>
+      <style jsx>{`
+        div {
+          height: ${size}px;
+          display: flex;
+          z-index: 1;
+        }
+      `}</style>
+    </div>
   );
 };
 
