@@ -65,7 +65,6 @@ export const globalCSS = css.global`
   }
 
   h1 {
-    color: ${colors.highlight};
     font-size: 4rem;
     font-weight: 900;
     line-height: normal;
