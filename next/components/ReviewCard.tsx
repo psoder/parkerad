@@ -27,7 +27,7 @@ const ReviewCard = ({
         )}
 
         <div>
-          <i className="username">- {user.username}</i>
+          <i className="username">- {user.name}</i>
         </div>
 
         <div>

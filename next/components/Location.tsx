@@ -155,7 +155,7 @@ const LocationOverlay = ({
               <br />
               View on{" "}
               <Link href={mapLink}>
-                <a>map</a>
+                <a target={"_blank"}>map</a>
               </Link>
               .
             </p>
@@ -281,7 +281,7 @@ const LeaveReview = ({ location }: { location: Location }) => {
     userId: string;
     rating: number;
     comment?: string;
-  }>({ rating: 0, userId: "62c73201b531ed4aa8190c5e" });
+  }>({ rating: 0, userId: "62d57bd8d74899ecc3be304f" });
 
   const handleChange = (event: any) => {
     setState({
