@@ -2,13 +2,12 @@ import Image from "next/image";
 import Link from "next/link";
 import { LocationReview } from "types/LocationReview";
 import StarBar from "components/StarBar";
-import { borders, colors, shadows, stdUnits } from "theme/Styles";
+import { colors, shadows, stdPx } from "theme/Styles";
 import * as utils from "utils/LocationReviewUtils";
 import { useState } from "react";
 import ReviewCard from "./ReviewCard";
 import { Location, Review } from "@prisma/client";
-
-const stdPx = stdUnits.px;
+import { getSession, useSession } from "next-auth/react";
 
 const LocationComponent = ({ location }: { location: LocationReview }) => {
   const [renderOverlay, setRenderOverlay] = useState(false);
@@ -62,7 +61,7 @@ const MinimalLocation = ({
           </div>
 
           <button style={{ gridArea: "review", fontSize: "1.25rem" }}>
-            Review
+            More Information
           </button>
         </div>
       </article>
@@ -79,7 +78,7 @@ const MinimalLocation = ({
             box-shadow: ${shadows.boxShadow};
             display: flex;
             flex-direction: column;
-            width: ${25 * stdPx}px;
+            width: ${stdPx(25)};
           }
 
           .content {
@@ -89,7 +88,7 @@ const MinimalLocation = ({
               "title rating"
               "review review";
             grid-template-rows: auto 3rem;
-            gap: ${stdPx}px;
+            gap: ${stdPx()};
 
             padding: 5%;
           }
@@ -131,7 +130,11 @@ const LocationOverlay = ({
         <div className="content">
           <div className="image" style={{ gridArea: "image" }}>
             <button className="button" onClick={handleChange}>
-              close
+              <Image
+                src={"/icons/x-black.svg"}
+                width={stdPx(3)}
+                height={stdPx(3)}
+              />
             </button>
 
             <Image
@@ -237,7 +240,7 @@ const LocationOverlay = ({
         }
 
         .content > *:not(:first-child) {
-          padding: ${2 * stdPx}px;
+          padding: ${stdPx(2)};
         }
         .reviewHeading {
           font-size: ${0.5 * titleSize}rem;
@@ -251,14 +254,16 @@ const LocationOverlay = ({
 
         .button {
           position: absolute;
-          right: ${stdPx}px;
-          top: ${stdPx}px;
+          right: ${stdPx()};
+          top: ${stdPx()};
           z-index: 1;
+          border: none;
+          background-color: transparent;
         }
 
         .reviews {
           display: grid;
-          gap: ${0.5 * stdPx}px;
+          gap: ${stdPx(0.5)};
           grid-template-areas:
             "reviewTitle rating"
             "reviewContainer reviewContainer";
@@ -267,7 +272,7 @@ const LocationOverlay = ({
         .reviewContainer {
           grid-area: "reviewContainer";
           display: flex;
-          gap: ${stdPx}px;
+          gap: ${stdPx()};
           flex-wrap: wrap;
           justify-content: space-between;
         }
@@ -277,11 +282,11 @@ const LocationOverlay = ({
 };
 
 const LeaveReview = ({ location }: { location: Location }) => {
+  const { data: session, status } = useSession();
   const [state, setState] = useState<{
-    userId: string;
     rating: number;
     comment?: string;
-  }>({ rating: 0, userId: "62d57bd8d74899ecc3be304f" });
+  }>({ rating: 0 });
 
   const handleChange = (event: any) => {
     setState({
@@ -294,7 +299,11 @@ const LeaveReview = ({ location }: { location: Location }) => {
     event.preventDefault();
     fetch("/api/reviews/create", {
       method: "POST",
-      body: JSON.stringify({ locationId: location.id, ...state }),
+      body: JSON.stringify({
+        ...state,
+        locationId: location.id,
+        userId: session?.user.id,
+      }),
     })
       .then((res) => res.json())
       .then((data) => {
@@ -302,47 +311,68 @@ const LeaveReview = ({ location }: { location: Location }) => {
       });
   };
 
-  return (
-    <div className="root">
-      <h2>Leave a review</h2>
-      <form onSubmit={handleSubmit}>
-        <StarBar
-          editable={true}
-          onChange={(value: number) => {
-            setState({ ...state, rating: value });
-          }}
-        />
-
-        <label>
-          Comment (Optional)
-          <input
-            type="text"
-            value={state?.comment || ""}
-            onChange={handleChange}
-            name="comment"
+  let content = <></>;
+  if (status === "authenticated") {
+    content = (
+      <>
+        <h2>Leave a review</h2>
+        <form onSubmit={handleSubmit}>
+          <StarBar
+            editable={true}
+            onChange={(value: number) => {
+              setState({ ...state, rating: value });
+            }}
           />
-        </label>
 
-        <input type="submit" value="Submit" />
-      </form>
-      <style jsx>{`
-        * {
-          margin: 0;
-        }
-        .root {
-          margin-left: ${2 * stdPx}px;
-        }
+          <label>
+            Comment (Optional)
+            <input
+              type="text"
+              value={state?.comment || ""}
+              onChange={handleChange}
+              name="comment"
+            />
+          </label>
 
-        form {
-          display: flex;
-          flex-direction: column;
-        }
+          <input type="submit" value="Submit" />
+        </form>
 
-        label {
-          display: flex;
-          flex-direction: column;
-        }
-      `}</style>
+        <style jsx>{`
+          h2 {
+            margin: 0;
+            margin-bottom: ${stdPx(0.5)};
+          }
+
+          form {
+            display: flex;
+            flex-direction: column;
+          }
+
+          label {
+            display: flex;
+            flex-direction: column;
+          }
+        `}</style>
+      </>
+    );
+  } else {
+    content = (
+      <h2>
+        <Link href={"/api/auth/signin"}>
+          <a>Sign in</a>
+        </Link>{" "}
+        to leave a review!
+      </h2>
+    );
+  }
+
+  return (
+    <div
+      style={{
+        marginLeft: stdPx(2),
+      }}
+    >
+      {content}
     </div>
   );
 };
