@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import { getComparitor, Comparitor } from "utils/LocationReviewUtils";
 import { colors, stdPx } from "theme/Styles";
 import AddLocation from "./Components/AddLocation";
+import Filter from "./Components/Filter";
+import Sort from "./Components/Sort";
 
 const Locations = ({ locations }: { locations: LocationReview[] }) => {
   const [fslocations, setFSLocations] = useState(locations);
@@ -71,62 +73,6 @@ const Locations = ({ locations }: { locations: LocationReview[] }) => {
         `}
       </style>
     </section>
-  );
-};
-
-const Filter = ({ onChange, filter }: { filter: string; onChange: any }) => {
-  return (
-    <div className="filter">
-      <div>
-        <h2>Filter Locations</h2>
-        <form>
-          <input
-            type="search"
-            name={"filter"}
-            value={filter}
-            onChange={onChange}
-          />
-        </form>
-      </div>
-
-      <style jsx>{`
-        .filter {
-          display: flex;
-          gap: ${stdPx(2)};
-        }
-
-        .filter > div {
-          display: flex;
-        }
-
-        h2 {
-          margin: 0;
-        }
-        form {
-          display: flex;
-          flex-direction: column;
-          gap: 0.5rem;
-        }
-
-        input {
-          color: ${colors.dark};
-        }
-      `}</style>
-    </div>
-  );
-};
-
-const Sort = ({ onChange }: { onChange: any }) => {
-  return (
-    <div style={{ display: "flex" }}>
-      <h2 style={{ margin: 0 }}>Sort Locations</h2>
-      <select onChange={onChange} name={"comparitor"}>
-        <option value={Comparitor.RATING}> Rating</option>
-        <option value={Comparitor.WEIGHTED_RATING}>Weighted rating</option>
-        <option value={Comparitor.DATE_ADDED}> Date Added</option>
-        <option value={Comparitor.NO_RATINGS}> No. Ratings</option>
-      </select>
-    </div>
   );
 };
 
