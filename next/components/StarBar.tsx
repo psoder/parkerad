@@ -4,21 +4,19 @@ import { Color } from "types/ColorTypes";
 function StarBar({
   maxStars = 5,
   initalStars = 0,
-  rounding = 0,
-  color = "#FFFF00",
   direction = "row",
   size = "1rem",
   editable = false,
+  style = { fillColor: "#FFFF00", outlineColor: "#000000" },
   onChange = () => {},
 }: {
   maxStars?: number;
   initalStars?: number;
-  rounding?: number;
-  color?: Color;
   direction?: "row" | "column";
   size?: `${number}rem` | `${number}px`;
   editable?: boolean;
-  onChange?: (value: number) => (any | void);
+  style?: { fillColor?: Color; outlineColor?: Color };
+  onChange?: (value: number) => any | void;
 }) {
   const [stars, setStars] = useState(initalStars!);
   const [hoverStars, setHoverStars] = useState(initalStars);
@@ -49,6 +47,7 @@ function StarBar({
                 handleClick={editable ? setStars : () => {}}
                 handleMouseEnter={setHoverStars}
                 handleMouseLeave={setHoverStars}
+                style={style}
               />
             </li>
           );
@@ -56,7 +55,7 @@ function StarBar({
       </ul>
       <style jsx>{`
         * {
-          color: ${color};
+          color: ${style.fillColor};
           font-size: ${size};
           margin: 0;
           padding: 0;
@@ -74,8 +73,7 @@ function StarBar({
 
 const Star = ({
   fill = 0,
-  outlineColor = "#2C3E50",
-  fillColor = "#FFFF00",
+  style = { fillColor: "#FFFF00", outlineColor: "#000000" },
   size = 24,
   value = -1,
   handleClick,
@@ -83,8 +81,7 @@ const Star = ({
   handleMouseLeave,
 }: {
   fill?: number;
-  outlineColor?: Color;
-  fillColor?: Color;
+  style?: { fillColor?: Color; outlineColor?: Color };
   size?: number;
   value?: number;
   handleClick?: any;
@@ -115,14 +112,14 @@ const Star = ({
         height={size}
         viewBox={`0 0 24 24`}
         strokeWidth="1"
-        stroke={outlineColor}
+        stroke={style.outlineColor}
         fill="none"
         strokeLinecap="round"
         strokeLinejoin="round"
       >
         <defs>
           <linearGradient id={`grad-${fill}`}>
-            <stop offset={`${fill * 100}%`} stopColor={fillColor} />
+            <stop offset={`${fill * 100}%`} stopColor={style.fillColor} />
             <stop offset="0" stopColor="transparent" />
           </linearGradient>
         </defs>

@@ -2,7 +2,7 @@ import Location from "components/Location";
 import { LocationReview } from "types/LocationReview";
 import { useEffect, useState } from "react";
 import { getComparitor, Comparitor } from "utils/LocationReviewUtils";
-import { colors, stdPx } from "theme/Styles";
+import { stdPx } from "theme/Styles";
 import AddLocation from "./Components/AddLocation";
 import Filter from "./Components/Filter";
 import Sort from "./Components/Sort";

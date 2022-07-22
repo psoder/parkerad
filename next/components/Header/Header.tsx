@@ -111,12 +111,17 @@ const Header = () => {
           align-items: center;
           padding: 0 2.5% 0 2.5%;
           border-bottom: ${borders.solidBorder} ${colors.dark};
-          background-color: ${colors.highlight};
+          background-color: ${colors.secondary};
           font-size: large;
         }
 
         h1 {
-          font-size: x-large;
+          font-size: xx-large;
+          color: ${colors.highlight};
+        }
+
+        h1 > a {
+          text-decoration: none;
         }
 
         nav {

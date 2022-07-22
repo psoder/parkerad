@@ -45,8 +45,6 @@ const Home: NextPage = ({ locations }: any) => {
 export const getServerSideProps: GetServerSideProps = async () => {
   // await createSampleData();
 
-  console.trace()
-
   const locations = await prisma.location.findMany({
     take: 24,
     include: {

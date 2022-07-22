@@ -27,11 +27,11 @@ const Intro = () => {
 
       <style jsx>{`
         #intro {
-          background-image: url(/images/firewatch.jpg);
+          background-image: url(/images/firewatch-alt1.jpg);
           background-position: center;
           background-attachment: fixed;
           background-size: cover;
-          min-height: 100vh;
+          min-height: 95vh;
           text-align: center;
 
           display: grid;
@@ -42,7 +42,6 @@ const Intro = () => {
         }
 
         .title {
-          opacity: 95%;
           padding: 1.5rem;
           background-color: ${colors.primary};
           box-shadow: ${shadows.boxShadow};
@@ -51,7 +50,7 @@ const Intro = () => {
         h1 {
           font-size: 3.5rem;
           margin: 0;
-          color: ${colors.highlight};
+          color: ${colors.secondary};
         }
 
         h2 {

@@ -34,7 +34,8 @@ const LocationCard = ({
             ) : (
               <StarBar
                 initalStars={utils.averageRating(location)}
-                size={titleSize}
+                size={"3rem"}
+                style={{ outlineColor: "#FFFF00", fillColor: "#FFFF00" }}
               />
             )}
           </div>
@@ -58,6 +59,7 @@ const LocationCard = ({
             display: flex;
             flex-direction: column;
             width: ${stdPx(25)};
+            color: ${colors.highlight};
           }
 
           .content {

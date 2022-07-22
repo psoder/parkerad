@@ -2,11 +2,11 @@ import { Color } from "types/ColorTypes";
 import css from "styled-jsx/css";
 
 export const colors = {
-  primary: "#5a9462" as Color,
-  secondary: "#94704b" as Color,
-  highlight: "#244729" as Color,
+  primary: "#60A672" as Color,
+  secondary: "#2A593E" as Color,
+  highlight: "#C0D98B" as Color,
   text: "#F5F5F5" as Color,
-  dark: "#222222" as Color,
+  dark: "#102026" as Color,
   light: "#F5F5F5" as Color,
   lightTint: "rgba(255, 255, 255, 0.5)" as Color,
   darkTint: "rgba(0, 0, 0, 0.5)" as Color,
