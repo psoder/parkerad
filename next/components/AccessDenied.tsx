@@ -1,6 +1,10 @@
 import { signIn } from "next-auth/react";
 
-export default function AccessDenied() {
+export default function AccessDenied({
+  toMessage = "view this page",
+}: {
+  toMessage?: string;
+}) {
   return (
     <>
       <h1>Access Denied</h1>
@@ -12,7 +16,7 @@ export default function AccessDenied() {
             signIn();
           }}
         >
-          You must be signed in to view this page
+          You must be signed in to {toMessage}
         </a>
       </p>
     </>
