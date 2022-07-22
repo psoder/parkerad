@@ -16,6 +16,18 @@ const sampleLocations: Prisma.LocationCreateInput[] = [
     coordinates: {
       coordinates: [59.3689071, 18.0672525],
     },
+    addedBy: {
+      connectOrCreate: {
+        where: {
+          email: "sno@derlund.com",
+        },
+        create: {
+          name: "Snöderlund",
+          email: "sno@derlund.com",
+          role: "ADMIN",
+        },
+      },
+    },
     image: "locations/IMG_20220619_221117.jpg",
     reviews: {
       create: [
@@ -23,19 +35,29 @@ const sampleLocations: Prisma.LocationCreateInput[] = [
           rating: 5,
           comment: "Very nice",
           user: {
-            create: {
-              name: "Snöderlund",
-              email: "sno@derlund.com",
-              role: "ADMIN",
+            connectOrCreate: {
+              where: {
+                email: "sno@derlund.com",
+              },
+              create: {
+                name: "Snöderlund",
+                email: "sno@derlund.com",
+                role: "ADMIN",
+              },
             },
           },
         },
         {
           rating: 2,
           user: {
-            create: {
-              name: "Degen",
-              email: "adam@degen.nu",
+            connectOrCreate: {
+              where: {
+                email: "adam@degen.nu",
+              },
+              create: {
+                name: "Degen",
+                email: "adam@degen.nu",
+              },
             },
           },
         },
@@ -61,6 +83,17 @@ const sampleLocations: Prisma.LocationCreateInput[] = [
     locationName: "Somewhere",
     coordinates: {
       coordinates: [0, 0],
+    },
+    addedBy: {
+      connectOrCreate: {
+        where: {
+          email: "degarn@bagis.ba",
+        },
+        create: {
+          name: "Degen",
+          email: "degarn@bagis.ba",
+        },
+      },
     },
     reviews: {
       create: [
@@ -100,11 +133,34 @@ const sampleLocations: Prisma.LocationCreateInput[] = [
     coordinates: {
       coordinates: [42, 69],
     },
+    addedBy: {
+      connectOrCreate: {
+        where: {
+          email: "stor@vispen.se",
+        },
+        create: {
+          name: "Vispen",
+          email: "stor@vispen.se",
+        },
+      },
+    },
   },
   {
     locationName: "Barösund",
     coordinates: {
       coordinates: [59.926174, 23.86255],
+    },
+    addedBy: {
+      connectOrCreate: {
+        where: {
+          email: "sno@derlund.com",
+        },
+        create: {
+          name: "Snöderlund",
+          email: "sno@derlund.com",
+          role: "ADMIN",
+        },
+      },
     },
     reviews: {
       create: [

@@ -6,7 +6,6 @@ import type {
 import Head from "next/head";
 import Locations from "modules/Locations";
 import prisma from "lib/prisma";
-import type { Prisma } from "@prisma/client";
 import type { LocationReview } from "types/LocationReview";
 import Intro from "modules/Intro";
 import Layout from "components/Layout";
@@ -45,6 +44,8 @@ const Home: NextPage = ({ locations }: any) => {
 
 export const getServerSideProps: GetServerSideProps = async () => {
   // await createSampleData();
+
+  console.trace()
 
   const locations = await prisma.location.findMany({
     take: 24,
