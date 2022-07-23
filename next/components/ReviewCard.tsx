@@ -8,7 +8,7 @@ import StarBar from "./StarBar";
 
 const ReviewCard = ({ review, user }: { review: Review; user: User }) => {
   const fontSize = 1.5;
-  const { status } = useSession();
+  const { data: session, status } = useSession();
   const [editing, setEditing] = useState(false);
   const [rating, setRating] = useState(review.rating);
   const [comment, setComment] = useState<string>(review?.comment ?? "");
@@ -24,7 +24,6 @@ const ReviewCard = ({ review, user }: { review: Review; user: User }) => {
             setRating(newRating);
           }}
         />
-
         {editing ? (
           <label>
             Comment
@@ -42,9 +41,7 @@ const ReviewCard = ({ review, user }: { review: Review; user: User }) => {
         ) : (
           <></>
         )}
-
         <i className="username">- {user.name}</i>
-
         <div style={{ display: "flex", flexDirection: "column" }}>
           <>Reviewd on the {review.reviewDate}</>
           <br />
@@ -57,7 +54,7 @@ const ReviewCard = ({ review, user }: { review: Review; user: User }) => {
           </>
         </div>
 
-        {status === "authenticated" && (
+        {status === "authenticated" && session.user.id == review.userId && (
           <div className="buttons">
             <EditButton
               onEdit={() => {

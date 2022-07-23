@@ -14,7 +14,10 @@ export default async function handler(
   const body = JSON.parse(req.body);
   const id = req.query.id as string;
 
-  if (token == null) {
+  if (
+    token == null ||
+    (await prisma.review.findUnique({ where: { id: id } }))?.userId != token.sub
+  ) {
     return unauthorizedRequestResponse(res, req);
   }
 
