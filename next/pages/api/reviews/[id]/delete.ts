@@ -11,25 +11,19 @@ export default async function handler(
   res: NextApiResponse
 ) {
   const token = await getToken({ req });
-  const body = JSON.parse(req.body);
   const id = req.query.id as string;
 
   if (token == null) {
     return unauthorizedRequestResponse(res, req);
   }
 
-  if (req.method !== "PUT") {
+  if (req.method !== "DELETE") {
     return invalidMethodResponse(res, req);
   }
 
-  await prisma.review.update({
+  await prisma.review.delete({
     where: { id: id },
-    data: {
-      rating: +body.rating,
-      comment: body.comment == "" ? null : body.comment,
-      editDate: new Date(),
-    },
   });
 
-  res.status(200).json({ message: "Successfully updated review" });
+  res.status(200).json({ message: "Successfully deleted review" });
 }

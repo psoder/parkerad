@@ -2,6 +2,7 @@ import { Review, User } from "@prisma/client";
 import { useSession } from "next-auth/react";
 import { useState } from "react";
 import { colors, shadows } from "theme/Styles";
+import DeleteButton from "./Buttons/DeleteButton";
 import EditButton from "./Buttons/EditButton";
 import StarBar from "./StarBar";
 
@@ -44,15 +45,20 @@ const ReviewCard = ({ review, user }: { review: Review; user: User }) => {
 
         <i className="username">- {user.name}</i>
 
-        <div>
+        <div style={{ display: "flex", flexDirection: "column" }}>
           <>Reviewd on the {review.reviewDate}</>
+          <br />
           <>
-            {review.editDate != null ? <>(edited: {review.editDate})</> : <></>}
+            {review.editDate != null ? (
+              <>Edited on the {review.editDate}</>
+            ) : (
+              <></>
+            )}
           </>
         </div>
 
         {status === "authenticated" && (
-          <div className="edit">
+          <div className="buttons">
             <EditButton
               onEdit={() => {
                 setEditing(true);
@@ -73,6 +79,14 @@ const ReviewCard = ({ review, user }: { review: Review; user: User }) => {
                   });
                   window.location.reload();
                 }
+              }}
+            />
+            <DeleteButton
+              onClick={async () => {
+                await fetch(`/api/reviews/${review.id}/delete`, {
+                  method: "DELETE",
+                });
+                window.location.reload();
               }}
             />
           </div>
@@ -100,10 +114,11 @@ const ReviewCard = ({ review, user }: { review: Review; user: User }) => {
           font-size: ${0.9 * fontSize}rem;
         }
 
-        .edit {
+        .buttons {
           position: absolute;
           top: 8px;
           right: 8px;
+          display: flex;
         }
       `}</style>
     </>
