@@ -1,6 +1,4 @@
 import AccessDenied from "components/AccessDenied";
-import CloseButton from "components/Buttons/CloseButton";
-import ClientOnlyPortal from "components/Modals/ClientOnlyPortal";
 import FullscreenModal from "components/Modals/FullscreenModal";
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
@@ -40,11 +38,7 @@ const AddLocation = () => {
           {status !== "authenticated" ? (
             <AccessDenied toMessage="add a location" />
           ) : (
-            <Input
-              closeModal={() => {
-                setShowModal(false);
-              }}
-            />
+            <Input />
           )}
         </FullscreenModal>
       )}
@@ -52,8 +46,7 @@ const AddLocation = () => {
   );
 };
 
-const Input = ({ closeModal }: { closeModal: () => void }) => {
-  const { data: session } = useSession();
+const Input = () => {
   const [state, setState] = useState<{
     locationName: string;
     longitude: number;
@@ -96,14 +89,10 @@ const Input = ({ closeModal }: { closeModal: () => void }) => {
 
     fetch("/api/locations/create", {
       method: "POST",
-      body: JSON.stringify({ ...state, userId: session?.user.id }),
-    })
-      .then((res) => {
-        res.json();
-      })
-      .then(() => {
-        window.location.reload();
-      });
+      body: JSON.stringify(state),
+    }).then(() => {
+      window.location.reload();
+    });
   };
 
   return (

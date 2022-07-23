@@ -6,7 +6,7 @@ import { stdPx } from "theme/Styles";
 import type { Location } from "@prisma/client";
 
 const LeaveReview = ({ location }: { location: Location }) => {
-  const { data: session, status } = useSession();
+  const { status } = useSession();
   const [state, setState] = useState<{
     rating: number;
     comment?: string;
@@ -26,7 +26,6 @@ const LeaveReview = ({ location }: { location: Location }) => {
       body: JSON.stringify({
         ...state,
         locationId: location.id,
-        userId: session?.user.id,
       }),
     }).then(() => {
       window.location.reload();
