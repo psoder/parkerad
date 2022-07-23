@@ -2,16 +2,16 @@ version: "3.8"
 services:
   web:
     build:
-      context: ./next
+      context: ./src
       dockerfile: next.Dockerfile
     networks:
       - parkerad
     ports:
       - "3000:3000"
     volumes:
-      - ./next:/next
-      - /next/node_modules
-      - /next/.next
+      - ./src:/src
+      - /src/node_modules
+      - /src/.next
 
   mongo-express:
     image: mongo-express:latest
