@@ -1,4 +1,3 @@
-import { Location } from "@prisma/client";
 import type { NextApiRequest, NextApiResponse } from "next";
 import prisma from "lib/prisma";
 import { getToken } from "next-auth/jwt";
@@ -20,7 +19,7 @@ export default async function handler(
     return res.status(405).send({ message: "Only POST requests allowed" });
   }
 
-  await prisma.location.create({
+  const location = await prisma.location.create({
     data: {
       locationName: body.locationName,
       coordinates: {
@@ -28,9 +27,11 @@ export default async function handler(
         coordinates: [+body.latitude, +body.longitude],
       },
       description: body.description,
-      image: body.image,
+      image: body.image || null,
       userId: token?.sub!,
     },
   });
-  res.status(201).json({ message: "Location added sucessfully" });
+  res
+    .status(201)
+    .json({ message: "Location added sucessfully", location: location });
 }

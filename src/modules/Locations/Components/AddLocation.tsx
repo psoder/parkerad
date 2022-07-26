@@ -1,7 +1,7 @@
 import AccessDenied from "components/AccessDenied";
 import FullscreenModal from "components/Modals/FullscreenModal";
 import { useSession } from "next-auth/react";
-import { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { colors, stdPx } from "theme/Styles";
 
 const AddLocation = () => {
@@ -52,47 +52,101 @@ const Input = () => {
     longitude: number;
     latitude: number;
     description?: string;
-    image?: string;
+    image?: File;
   }>({
     locationName: "",
     longitude: 0,
     latitude: 0,
+    image: undefined,
   });
   const [allowSubmit, setAllowSubmit] = useState(false);
+  const fileInput = useRef(null);
 
   useEffect(() => {
-    let allow = true;
-    if (state.locationName == "") {
-      allow = false;
-    }
+    const allow = () => {
+      if (state.locationName == "") {
+        return false;
+      }
 
-    if (state.longitude < -180 || state.longitude > 180) {
-      allow = false;
-    }
+      if (state.longitude < -180 || state.longitude > 180) {
+        return false;
+      }
 
-    if (state.latitude < -180 || state.latitude > 180) {
-      allow = false;
-    }
+      if (state.latitude < -180 || state.latitude > 180) {
+        return false;
+      }
 
-    setAllowSubmit(allow);
+      return true;
+    };
+
+    setAllowSubmit(allow());
   }, [state.locationName, state.latitude, state.longitude]);
 
   const handleChange = (event: any) => {
-    setState({
-      ...state,
-      [event.target.name]: event.target.value,
-    });
+    if (event.target.name === "image") {
+      setState({
+        ...state,
+        image: event.target.files[0],
+      });
+    } else {
+      setState({
+        ...state,
+        [event.target.name]: event.target.value,
+      });
+    }
   };
 
-  const handleSubmit = (event: any) => {
+  const handleClearImage = () => {
+    setState({ ...state, image: undefined });
+  };
+
+  const handleSubmit = async (event: any) => {
     event?.preventDefault();
 
-    fetch("/api/locations/create", {
+    let imageKey = "";
+
+    if (state.image) {
+      // Get signed upload URL
+      const res = await fetch("/api/uploadFile", {
+        method: "POST",
+        body: JSON.stringify({
+          type: state.image?.type,
+        }),
+      });
+
+      if (res.status >= 300) {
+        return;
+      } else {
+        const { url, key } = await res.json();
+        imageKey = key;
+
+        // Rename image to id
+        let image = new File([state.image], key);
+
+        // Upload image
+        await fetch(url, {
+          method: "PUT",
+          headers: {
+            "Content-type": image.type,
+            "Access-Control-Allow-Origin": "*",
+          },
+          body: image,
+        });
+      }
+    }
+
+    // Create location
+    const { location } = await fetch("/api/locations/create", {
       method: "POST",
-      body: JSON.stringify(state),
-    }).then(() => {
-      window.location.reload();
+      body: JSON.stringify({
+        ...state,
+        image: imageKey,
+      }),
+    }).then((res) => {
+      return res.json();
     });
+
+    window.location.reload();
   };
 
   return (
@@ -141,10 +195,12 @@ const Input = () => {
           <input
             name="image"
             type="file"
+            ref={fileInput}
             accept="image/*"
-            value={state.image || ""}
+            // value={fileInput.current?.files[0].name || ""}
             onChange={handleChange}
           />
+          <input type="button" value="Clear" onClick={handleClearImage} />
         </label>
         <input type="submit" value="Add Location" disabled={!allowSubmit} />
       </form>
