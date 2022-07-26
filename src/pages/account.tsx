@@ -1,11 +1,23 @@
 import AccessDenied from "components/AccessDenied";
 import Layout from "components/Layout";
-import { NextPage } from "next";
+import { GetServerSideProps, NextPage } from "next";
 import { useSession } from "next-auth/react";
 import Head from "next/head";
+import prisma from "lib/prisma";
+import { getToken } from "next-auth/jwt";
+import * as PrismaTypes from "@prisma/client";
+import StarBar from "components/StarBar";
 
-const Account: NextPage = ({ locations }: any) => {
+type User = PrismaTypes.User & {
+  locationsAdded: PrismaTypes.Location[];
+  reviews: (PrismaTypes.Review & {
+    location: PrismaTypes.Location;
+  })[];
+};
+
+const Account: NextPage = ({ usr }: any) => {
   const { data: session, status } = useSession();
+  const user = usr as User;
 
   // If no session exists, display access denied message
   if (!session) {
@@ -26,11 +38,47 @@ const Account: NextPage = ({ locations }: any) => {
       Hello {session.user?.name}, your account id is{" "}
       <code>{session.user.id}</code>. Your account is a{" "}
       <code>{session.user.role}</code> account.
+      <div className="locationsAdded">
+        <h1>Locations Added</h1>
+        {user.locationsAdded.map((loc) => {
+          return <div>{loc.locationName}</div>;
+        })}
+      </div>
+      <div className="reviews">
+        <h1>Reviews</h1>
+        {user.reviews.map((review) => {
+          return (
+            <div style={{ display: "flex", justifyContent: "space-between", width: 350 }}>
+              {review.location.locationName}
+              <StarBar initalStars={review.rating} />
+            </div>
+          );
+        })}
+      </div>
       <style global jsx>
         {``}
       </style>
     </Layout>
   );
+};
+
+export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
+  const token = await getToken({
+    req,
+    secret: process.env.NEXTAUTH_SECRET,
+  });
+
+  const user = await prisma.user.findUnique({
+    where: { id: token?.sub },
+    include: {
+      locationsAdded: true,
+      reviews: { include: { location: true } },
+    },
+  });
+
+  return {
+    props: { usr: JSON.parse(JSON.stringify(user)) },
+  };
 };
 
 export default Account;

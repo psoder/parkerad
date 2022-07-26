@@ -28,7 +28,7 @@ export default async function handler(
       },
       description: body.description,
       image: body.image || null,
-      userId: token?.sub!,
+      addedById: token?.sub!,
     },
   });
   res

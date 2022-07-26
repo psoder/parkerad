@@ -1,6 +1,5 @@
 import type {
   GetServerSideProps,
-  InferGetServerSidePropsType,
   NextPage,
 } from "next";
 import Head from "next/head";
@@ -53,6 +52,7 @@ export const getServerSideProps: GetServerSideProps = async () => {
           user: true,
         },
       },
+      addedBy: true,
     },
   });
 
