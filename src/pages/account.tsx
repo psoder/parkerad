@@ -24,7 +24,8 @@ const Account: NextPage = ({ locations }: any) => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       Hello {session.user?.name}, your account id is{" "}
-      <code>{session.user.id}</code>.
+      <code>{session.user.id}</code>. Your account is a{" "}
+      <code>{session.user.role}</code> account.
       <style global jsx>
         {``}
       </style>
