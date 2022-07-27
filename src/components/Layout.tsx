@@ -1,22 +1,26 @@
 import Header from "components/Header";
 import Footer from "components/Footer";
-import { borders, colors, shadows, stdPx } from "theme/Styles";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <>
-      <div>
-        <Header />
+      <div className="root">
+        <div className="header">
+          <Header />
+        </div>
+        <main>{children}</main>
+        <Footer />
       </div>
-      <main>{children}</main>
-      <Footer />
 
       <style jsx>{`
-        main {
-          margin: ${stdPx(0)};
+        .root {
+          min-height: 100vh;
+          display: grid;
+          flex-direction: column;
+          grid-template-rows: auto 1fr auto;
         }
 
-        div {
+        .header {
           position: sticky;
           top: 0;
           width: 100%;

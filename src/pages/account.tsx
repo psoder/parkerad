@@ -5,17 +5,10 @@ import { useSession } from "next-auth/react";
 import Head from "next/head";
 import prisma from "lib/prisma";
 import { getToken } from "next-auth/jwt";
-import * as PrismaTypes from "@prisma/client";
-import StarBar from "components/StarBar";
+import { User } from "modules/Account/types";
+import Account from "modules/Account";
 
-type User = PrismaTypes.User & {
-  locationsAdded: PrismaTypes.Location[];
-  reviews: (PrismaTypes.Review & {
-    location: PrismaTypes.Location;
-  })[];
-};
-
-const Account: NextPage = ({ usr }: any) => {
+const AccountPage: NextPage = ({ usr }: any) => {
   const { data: session, status } = useSession();
   const user = usr as User;
 
@@ -37,36 +30,15 @@ const Account: NextPage = ({ usr }: any) => {
       </Head>
 
       <Layout>
-        Hello {session.user?.name}, your account id is{" "}
-        <code>{session.user.id}</code>. Your account is a{" "}
-        <code>{session.user.role}</code> account.
-        <div className="locationsAdded">
-          <h1>Locations Added</h1>
-          {user.locationsAdded.map((loc) => {
-            return <div>{loc.locationName}</div>;
-          })}
-        </div>
-        <div className="reviews">
-          <h1>Reviews</h1>
-          {user.reviews.map((review) => {
-            return (
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  width: 350,
-                }}
-              >
-                {review.location.locationName}
-                <StarBar initalStars={review.rating} />
-              </div>
-            );
-          })}
-        </div>
+        <Account user={user} />
       </Layout>
 
       <style global jsx>
-        {``}
+        {`
+          * {
+            color: #696969;
+          }
+        `}
       </style>
     </>
   );
@@ -81,7 +53,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
   const user = await prisma.user.findUnique({
     where: { id: token?.sub },
     include: {
-      locationsAdded: true,
+      locationsAdded: { include: { reviews: true } },
       reviews: { include: { location: true } },
     },
   });
@@ -91,4 +63,4 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
   };
 };
 
-export default Account;
+export default AccountPage;
