@@ -3,6 +3,7 @@ import FullscreenModal from "components/Modals/FullscreenModal";
 import { useSession } from "next-auth/react";
 import React, { useEffect, useRef, useState } from "react";
 import { colors, stdPx } from "theme/Styles";
+import { uploadImage } from "utils/APIUtils";
 
 const AddLocation = () => {
   const [showModal, setShowModal] = useState(false);
@@ -103,40 +104,21 @@ const Input = () => {
   const handleSubmit = async (event: any) => {
     event?.preventDefault();
 
-    let imageKey = "";
+    let imageKey: string | null = null;
 
     if (state.image) {
-      // Get signed upload URL
-      const res = await fetch("/api/uploadFile", {
-        method: "POST",
-        body: JSON.stringify({
-          type: state.image?.type,
-        }),
+      imageKey = await uploadImage(state.image).then((key) => {
+        return key;
       });
+      console.log(imageKey);
+    }
 
-      if (res.status >= 300) {
-        return;
-      } else {
-        const { url, key } = await res.json();
-        imageKey = key;
-
-        // Rename image to id
-        let image = new File([state.image], key);
-
-        // Upload image
-        await fetch(url, {
-          method: "PUT",
-          headers: {
-            "Content-type": image.type,
-            "Access-Control-Allow-Origin": "*",
-          },
-          body: image,
-        });
-      }
+    if (imageKey == null) {
+      return;
     }
 
     // Create location
-    const { location } = await fetch("/api/locations/create", {
+    await fetch("/api/locations/create", {
       method: "POST",
       body: JSON.stringify({
         ...state,

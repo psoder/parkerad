@@ -61,7 +61,7 @@ model Location {
   id           String      @id @default(auto()) @map("_id") @db.ObjectId
   locationName String      @unique @map("location_name")
   description  String?
-  coordinates  Coordinates
+  coordinates  Coordinates?
   dateAdded    DateTime    @default(now()) @map("date_added")
   addedBy      User        @relation(fields: [addedById], references: [id])
   addedById    String      @map("added_by_id") @db.ObjectId

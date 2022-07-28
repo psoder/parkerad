@@ -66,7 +66,7 @@ const ReviewCard = ({ review, user }: { review: Review; user: User }) => {
                   rating != review.rating ||
                   comment != (review.comment ?? "")
                 ) {
-                  await fetch(`/api/reviews/${review.id}/edit`, {
+                  await fetch(`/api/reviews/${review.id}/update`, {
                     method: "PUT",
                     body: JSON.stringify({
                       reviewId: review.id,

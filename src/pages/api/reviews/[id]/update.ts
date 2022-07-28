@@ -10,6 +10,10 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
+  if (req.method !== "PUT") {
+    return invalidMethodResponse(res, req);
+  }
+
   const token = await getToken({ req });
   const body = JSON.parse(req.body);
   const id = req.query.id as string;
@@ -21,15 +25,11 @@ export default async function handler(
     return unauthorizedRequestResponse(res, req);
   }
 
-  if (req.method !== "PUT") {
-    return invalidMethodResponse(res, req);
-  }
-
   await prisma.review.update({
     where: { id: id },
     data: {
-      rating: +body.rating,
-      comment: body.comment == "" ? null : body.comment,
+      rating: +body.rating || undefined,
+      comment: body.comment || undefined,
       editDate: new Date(),
     },
   });
