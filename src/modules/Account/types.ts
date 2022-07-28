@@ -8,3 +8,7 @@ export type User = PrismaTypes.User & {
 };
 
 export type Location = PrismaTypes.Location & { reviews: PrismaTypes.Review[] };
+
+export type Review = PrismaTypes.Review & {
+  location: PrismaTypes.Location;
+};

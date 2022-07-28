@@ -37,14 +37,6 @@ const AccountPage: NextPage = ({ usr }: any) => {
           <Account />
         </Layout>
       </UserContext.Provider>
-
-      <style global jsx>
-        {`
-          * {
-            color: #696969;
-          }
-        `}
-      </style>
     </>
   );
 };

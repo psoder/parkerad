@@ -81,7 +81,12 @@ const LocationRow = ({ location }: { location: Location }) => {
 
       <Table.Cell>
         {editing ? (
-          <Input fluid value={state.locationName || ""} onChange={handleChange}>
+          <Input
+            size="small"
+            fluid
+            value={state.locationName || ""}
+            onChange={handleChange}
+          >
             <input name="locationName" />
           </Input>
         ) : (
@@ -91,7 +96,7 @@ const LocationRow = ({ location }: { location: Location }) => {
 
       <Table.Cell>
         {editing ? (
-          <Input fluid value={state.description || ""}>
+          <Input size="small" fluid value={state.description || ""}>
             <input name="description" onChange={handleChange} />
           </Input>
         ) : (
@@ -113,6 +118,7 @@ const LocationRow = ({ location }: { location: Location }) => {
         {editing ? (
           <>
             <Input
+              size="small"
               fluid
               value={state.latitude || ""}
               placeholder="Latitude"
@@ -122,6 +128,7 @@ const LocationRow = ({ location }: { location: Location }) => {
               <input name="latitude" onChange={handleChange} />
             </Input>
             <Input
+              size="small"
               fluid
               type="number"
               value={state.longitude || ""}
