@@ -5,9 +5,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <>
       <div className="root">
-        <div className="header">
-          <Header />
-        </div>
+        <Header />
         <main>{children}</main>
         <Footer />
       </div>
@@ -18,13 +16,6 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           display: grid;
           flex-direction: column;
           grid-template-rows: auto 1fr auto;
-        }
-
-        .header {
-          position: sticky;
-          top: 0;
-          width: 100%;
-          z-index: 1;
         }
       `}</style>
     </>

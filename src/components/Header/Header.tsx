@@ -1,150 +1,80 @@
-import { borders, colors, shadows, stdPx } from "theme/Styles";
-import Link from "next/link";
-import Image from "next/image";
 import { signIn, signOut, useSession } from "next-auth/react";
+import Link from "next/link";
+import { CSSProperties } from "react";
+import { Icon, Menu } from "semantic-ui-react";
 
-const Header = () => {
-  const { data: session, status } = useSession();
-  const iconScaling = 2;
+const Header = ({ style }: { style?: CSSProperties }) => {
+  const { status } = useSession();
 
   return (
-    <header>
-      <h1>
-        <Link href={"/"}>
-          <a>Parkerad</a>
-        </Link>
-      </h1>
+    <Menu
+      as={"header"}
+      style={{
+        position: "sticky",
+        zIndex: 1,
+        top: 0,
+        margin: 0,
+        borderRadius: 0,
+      }}
+    >
+      <Link href={"/"}>
+        <Menu.Item header position="left">
+          <h2>Parkerad</h2>
+        </Menu.Item>
+      </Link>
 
-      <nav>
-        <ul>
-          <li>
-            <Link href={"/"}>
-              <a>
-                Home
-                <Image
-                  src={"/icons/home-white.svg"}
-                  width={stdPx(iconScaling)}
-                  height={stdPx(iconScaling)}
-                />
-              </a>
-            </Link>
-          </li>
+      <Link href={"/"}>
+        <Menu.Item position="right">
+          <Icon name="home" size="large" />
+          Home
+        </Menu.Item>
+      </Link>
 
-          <li>
-            <Link href={"/#locations"}>
-              <a>
-                Locaitons
-                <Image
-                  src={"/icons/trees-white.svg"}
-                  width={stdPx(iconScaling)}
-                  height={stdPx(iconScaling)}
-                />
-              </a>
-            </Link>
-          </li>
+      <Link href={"/#locations"}>
+        <Menu.Item position="right">
+          <Icon name="tree" size="large" />
+          Locations
+        </Menu.Item>
+      </Link>
 
-          <li>
-            <a target={"_blank"} href="https://github.com/fipplarna/parkerad">
-              Github
-              <Image
-                src={"/icons/github-logo-white.svg"}
-                width={stdPx(iconScaling)}
-                height={stdPx(iconScaling)}
-              />
-            </a>
-          </li>
+      <Menu.Item
+        href="https://github.com/fipplarna/parkerad"
+        target="_blank"
+        position="right"
+      >
+        <Icon name="github" size="large" />
+        Github
+      </Menu.Item>
 
-          {status === "authenticated" ? (
-            <>
-              <li>
-                <Link href={"/account"}>
-                  <a>
-                    Account
-                    <Image
-                      src={`${session.user?.image}`}
-                      height={stdPx(iconScaling)}
-                      width={stdPx(iconScaling)}
-                      style={{ borderRadius: "50%" }}
-                    />
-                  </a>
-                </Link>
-              </li>
-              <li>
-                <a
-                  href="/api/auth/signout"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    signOut();
-                  }}
-                >
-                  Sign out
-                  <Image
-                    src={"/icons/logout-white.svg"}
-                    width={stdPx(iconScaling)}
-                    height={stdPx(iconScaling)}
-                  />
-                </a>
-              </li>
-              {/* <style jsx>{``}</style> */}
-            </>
-          ) : (
-            <li>
-              <Link href={"/api/auth/signin"}>
-                <a>
-                  Sign in
-                  <Image
-                    src={"/icons/user-circle-white.svg"}
-                    width={stdPx(iconScaling)}
-                    height={stdPx(iconScaling)}
-                  />
-                </a>
-              </Link>
-            </li>
-          )}
-        </ul>
-      </nav>
-      <style jsx>{`
-        header {
-          display: flex;
-          justify-content: space-between;
-          height: ${stdPx(3.5)};
-          align-items: center;
-          padding: 0 2.5% 0 2.5%;
-          border-bottom: ${borders.solidBorder} ${colors.dark};
-          background-color: ${colors.secondary};
-          font-size: large;
-        }
+      {status !== "authenticated" && (
+        <Menu.Item onClick={() => signIn()} position="right">
+          <Icon name="sign in" size="large" />
+          Sign in
+        </Menu.Item>
+      )}
 
-        h1 {
-          font-size: xx-large;
-          color: ${colors.highlight};
-        }
+      {status === "authenticated" && (
+        <>
+          <Link href={"/account"}>
+            <Menu.Item position="right">
+              <Icon name="user" size="large" />
+              Account
+            </Menu.Item>
+          </Link>
 
-        h1 > a {
-          text-decoration: none;
-        }
+          <Menu.Item onClick={() => signOut()} position="right">
+            <Icon name="sign out" size="large" />
+            Sign out
+          </Menu.Item>
+        </>
+      )}
 
-        nav {
-          display: flex;
-          justify-content: end;
-        }
-
-        ul {
-          display: flex;
-          align-items: center;
-          margin: 0;
-          padding: 0;
-          gap: ${stdPx()};
-          list-style: none;
-        }
-
-        li a {
-          display: flex;
-          align-items: center;
-          gap: ${stdPx(0.33)};
+      <style>{`
+        .ui.menu:not(.vertical) .right.item, .ui.menu:not(.vertical) .right.menu {
+          margin-left: 0 !important
         }
       `}</style>
-    </header>
+    </Menu>
   );
 };
 
