@@ -2,6 +2,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 import prisma from "lib/prisma";
 import {
   invalidMethodResponse,
+  permittedMethods,
   unauthorizedRequestResponse,
 } from "utils/APIUtils";
 import { getToken } from "next-auth/jwt";
@@ -10,7 +11,7 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  if (req.method !== "PUT") {
+  if (permittedMethods("PUT", req.method!)) {
     return invalidMethodResponse(res, req);
   }
 
@@ -22,7 +23,7 @@ export default async function handler(
     token == null ||
     (await prisma.review.findUnique({ where: { id: id } }))?.userId != token.sub
   ) {
-    return unauthorizedRequestResponse(res, req);
+    return unauthorizedRequestResponse(res);
   }
 
   await prisma.review.update({

@@ -2,6 +2,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 import prisma from "lib/prisma";
 import {
   invalidMethodResponse,
+  permittedMethods,
   unauthorizedRequestResponse,
 } from "utils/APIUtils";
 import { getToken } from "next-auth/jwt";
@@ -11,15 +12,13 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  if (req.method !== "PUT") {
+  if (permittedMethods("PUT", req.method!)) {
     return invalidMethodResponse(res, req);
   }
 
   const token = await getToken({ req });
   const body = JSON.parse(req.body);
   const locationId = req.query.id as string;
-
-  console.log(locationId);
 
   const addedById = (
     await prisma.location.findUnique({ where: { id: locationId } })
@@ -29,7 +28,7 @@ export default async function handler(
     token?.sub != addedById ||
     (token?.role != "ADMIN" && token?.sub != addedById)
   ) {
-    return unauthorizedRequestResponse(res, req);
+    return unauthorizedRequestResponse(res);
   }
 
   let coordinates: { type: string; coordinates: number[] } | null = null;

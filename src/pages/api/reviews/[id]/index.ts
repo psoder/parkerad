@@ -1,7 +1,7 @@
 import { Review } from "@prisma/client";
 import type { NextApiRequest, NextApiResponse } from "next";
 import prisma from "lib/prisma";
-import { invalidMethodResponse } from "utils/APIUtils";
+import { invalidMethodResponse, permittedMethods } from "utils/APIUtils";
 
 type Response = Review | { message: string };
 
@@ -9,11 +9,11 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<Response>
 ) {
-  const id = req.query.id as string;
-
-  if (req.method !== "GET") {
+  if (permittedMethods("GET", req.method!)) {
     return invalidMethodResponse(res, req);
   }
+
+  const id = req.query.id as string;
 
   const review = await prisma.review
     .findUnique({

@@ -1,5 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next";
 
+type Method = "GET" | "PUT" | "POST" | "DELETE";
+
 export const messages = {
   invalidMethod: (req: NextApiRequest) =>
     `Method, '${req.method}', is not allowed for this endpoint.`,
@@ -9,14 +11,22 @@ export const invalidMethodResponse = (
   res: NextApiResponse,
   req: NextApiRequest
 ) => {
-  return res.status(405).json({ message: messages.invalidMethod(req) });
+  return res.status(405).send(messages.invalidMethod(req));
 };
 
-export const unauthorizedRequestResponse = (
-  res: NextApiResponse,
-  req: NextApiRequest
+export const unauthorizedRequestResponse = (res: NextApiResponse) => {
+  return res.status(401).send("Unauthorized");
+};
+
+export const permittedMethods = (
+  permittedMethod: Method | Method[],
+  method: string
 ) => {
-  return res.status(401).json({ message: "Unauthorized" });
+  if (typeof method === "string") {
+    return permittedMethod !== method;
+  } else {
+    return false;
+  }
 };
 
 export const uploadImage = async (image: File): Promise<string | null> => {
