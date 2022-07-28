@@ -4,7 +4,7 @@ import { UserContext } from "pages/account";
 import { useContext } from "react";
 
 const LocationsAdded = () => {
-  const user = useContext(UserContext);
+  const { user } = useContext(UserContext);
 
   return (
     <Tab.Pane>
@@ -23,7 +23,7 @@ const LocationsAdded = () => {
           </Table.Row>
         </Table.Header>
         <Table.Body>
-          {user?.locationsAdded.map((location) => {
+          {user.locationsAdded.map((location) => {
             return <LocationRow key={location.id} location={location} />;
           })}
         </Table.Body>

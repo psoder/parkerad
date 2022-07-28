@@ -7,13 +7,28 @@ import prisma from "lib/prisma";
 import { getToken } from "next-auth/jwt";
 import { User } from "modules/Account/types";
 import Account from "modules/Account";
-import React from "react";
+import React, { useState } from "react";
 
-export const UserContext = React.createContext<User | undefined>(undefined);
+export const UserContext = React.createContext<{
+  user: User;
+}>({
+  user: {
+    id: "",
+    role: "USER",
+    name: "",
+    image: "",
+    email: "",
+    emailVerified: new Date(),
+    dateCreated: new Date(),
+    reviews: [],
+    locationsAdded: [],
+  },
+});
 
 const AccountPage: NextPage = ({ usr }: any) => {
   const { data: session, status } = useSession();
-  const user = usr as User;
+
+  const [user, setUser] = useState<User>(usr as User);
 
   // If no session exists, display access denied message
   if (!session) {
@@ -32,7 +47,7 @@ const AccountPage: NextPage = ({ usr }: any) => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <UserContext.Provider value={user}>
+      <UserContext.Provider value={{ user: user }}>
         <Layout>
           <Account />
         </Layout>

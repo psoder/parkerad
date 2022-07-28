@@ -4,7 +4,7 @@ import { useContext } from "react";
 import Review from "./Review";
 
 const Reviews = () => {
-  const user = useContext(UserContext);
+  const { user } = useContext(UserContext);
   return (
     <Tab.Pane>
       <h1>Reviews</h1>

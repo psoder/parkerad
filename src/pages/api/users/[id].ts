@@ -23,7 +23,7 @@ export default async function handler(
     await prisma.user.findUnique({
       where: { id: token.sub },
       include: {
-        locationsAdded: true,
+        locationsAdded: { include: { reviews: true } },
         reviews: { include: { location: true } },
       },
     })

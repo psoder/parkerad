@@ -21,8 +21,8 @@ const Review = ({ review }: { review: Review }) => {
         method: "PUT",
         body: JSON.stringify(state),
       });
+      window.location.reload();
     }
-    window.location.reload();
   };
 
   return (
