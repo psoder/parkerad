@@ -1,11 +1,9 @@
-import { Session } from "next-auth";
 import { Container, Segment, Tab } from "semantic-ui-react";
-import { User } from "modules/Account/types";
 import AccountSettings from "modules/Account/components/AccountSettings";
 import LocationsAdded from "modules/Account/components/LocationsAdded";
 import Reviews from "modules/Account/components/Reviews";
 
-const Account = ({ user }: { user: User }) => {
+const Account = () => {
   return (
     <Container fluid style={{ padding: 50 }}>
       <Tab
@@ -17,15 +15,15 @@ const Account = ({ user }: { user: User }) => {
         panes={[
           {
             menuItem: "Account Settings",
-            render: () => <AccountSettings user={user} />,
+            render: () => <AccountSettings />,
           },
           {
             menuItem: "Locations Added",
-            render: () => <LocationsAdded user={user} />,
+            render: () => <LocationsAdded />,
           },
           {
             menuItem: "Reviews",
-            render: () => <Reviews user={user} />,
+            render: () => <Reviews />,
           },
         ]}
       />

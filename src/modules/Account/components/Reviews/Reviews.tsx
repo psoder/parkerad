@@ -1,12 +1,14 @@
 import StarBar from "components/StarBar";
 import { Tab } from "semantic-ui-react";
-import { User } from "modules/Account/types";
+import { UserContext } from "pages/account";
+import { useContext } from "react";
 
-const Reviews = ({ user }: { user: User }) => {
+const Reviews = () => {
+  const user = useContext(UserContext);
   return (
     <Tab.Pane>
       <h1>Reviews</h1>
-      {user.reviews.map((review) => {
+      {user?.reviews.map((review) => {
         return (
           <div
             style={{

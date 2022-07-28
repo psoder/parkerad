@@ -1,36 +1,63 @@
 import { Location } from "modules/Account/types";
 import { useState } from "react";
-import { Button, Icon, Image, Input, Label, Table } from "semantic-ui-react";
+import { Button, Image, Input, Modal, Table } from "semantic-ui-react";
 import { format } from "date-fns";
+import { isValidCoordinate } from "utils/LocationUtils";
+import UploadImage from "./UploadImage";
 
 const LocationRow = ({ location }: { location: Location }) => {
   const [editing, setEditing] = useState(false);
   const [state, setState] = useState({
     locationName: location.locationName,
     description: location.description,
-    latitude: location.coordinates.coordinates[0],
-    longitude: location.coordinates.coordinates[1],
+    latitude: location.coordinates?.coordinates[0],
+    longitude: location.coordinates?.coordinates[1],
   });
 
   const handleChange = (e: any) => {
     setState({ ...state, [e.target.name]: e.target.value });
   };
 
-  const isValidCoordinate = (cord: number) => cord <= 180 && cord >= -180;
+  const handleSave = () => {
+    if (
+      location.locationName == state.locationName &&
+      location.description == state.description &&
+      location.coordinates?.coordinates[0] == state.latitude &&
+      location.coordinates?.coordinates[1] == state.longitude
+    ) {
+      return;
+    } else {
+      fetch(`/api/locations/${location.id}/update`, {
+        method: "PUT",
+        body: JSON.stringify({
+          locationName: state.locationName,
+          description: state.description,
+          latitude: state.latitude,
+          longitude: state.longitude,
+        }),
+      })
+        .then((res) => {
+          return res.json();
+        })
+        .then(console.log);
+    }
+  };
 
   return (
     <Table.Row>
       <Table.Cell>
         <Button
-          icon
+          icon={editing ? "save" : "edit"}
           fluid
           onClick={() => {
+            if (editing) {
+              handleSave();
+            }
             setEditing(!editing);
           }}
-        >
-          <Icon name={editing ? "save" : "edit"} />
-        </Button>
+        />
       </Table.Cell>
+
       <Table.Cell>
         {location.image ? (
           <Image
@@ -39,30 +66,41 @@ const LocationRow = ({ location }: { location: Location }) => {
             centered
           />
         ) : (
-          <Button compact fluid>
-            Uppload Image
-          </Button>
+          <>
+            <UploadImage
+              trigger={
+                <Button compact fluid>
+                  Uppload Image
+                </Button>
+              }
+              location={location}
+            />
+          </>
         )}
       </Table.Cell>
+
       <Table.Cell>
         {editing ? (
-          <Input fluid value={state.locationName} onChange={handleChange}>
+          <Input fluid value={state.locationName || ""} onChange={handleChange}>
             <input name="locationName" />
           </Input>
         ) : (
           state.locationName
         )}
       </Table.Cell>
+
       <Table.Cell>
         {editing ? (
-          <Input fluid value={state.description}>
+          <Input fluid value={state.description || ""}>
             <input name="description" onChange={handleChange} />
           </Input>
         ) : (
           state.description || "No description available."
         )}
       </Table.Cell>
+
       <Table.Cell>{location.reviews.length}</Table.Cell>
+
       <Table.Cell>
         {location.reviews
           .map((rev) => rev.rating)
@@ -70,24 +108,25 @@ const LocationRow = ({ location }: { location: Location }) => {
             return acc + curr;
           }, 0) / location.reviews.length || "-"}
       </Table.Cell>
+
       <Table.Cell>
         {editing ? (
           <>
             <Input
               fluid
-              value={state.latitude}
+              value={state.latitude || ""}
               placeholder="Latitude"
               type="number"
-              error={!isValidCoordinate(state.latitude)}
+              error={!isValidCoordinate(state.latitude!)}
             >
               <input name="latitude" onChange={handleChange} />
             </Input>
             <Input
               fluid
               type="number"
-              value={state.longitude}
+              value={state.longitude || ""}
               placeholder="Longitude"
-              error={!isValidCoordinate(state.latitude)}
+              error={!isValidCoordinate(state.latitude!)}
             >
               <input name="longitude" onChange={handleChange} />
             </Input>
@@ -100,6 +139,7 @@ const LocationRow = ({ location }: { location: Location }) => {
           </>
         )}
       </Table.Cell>
+
       <Table.Cell>
         {format(new Date(location.dateAdded), "dd-MM-yyyy")}
       </Table.Cell>

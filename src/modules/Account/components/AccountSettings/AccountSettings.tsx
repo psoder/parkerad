@@ -1,9 +1,12 @@
 import { Tab } from "semantic-ui-react";
-import { User } from "modules/Account/types";
 import { useSession } from "next-auth/react";
+import { UserContext } from "pages/account";
+import { useContext } from "react";
 
-const AccountSettings = ({ user }: { user: User }) => {
+const AccountSettings = () => {
   const { data: session } = useSession();
+  const user = useContext(UserContext);
+
   return (
     <Tab.Pane>
       <h1>Account Settings</h1>

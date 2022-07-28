@@ -7,6 +7,9 @@ import prisma from "lib/prisma";
 import { getToken } from "next-auth/jwt";
 import { User } from "modules/Account/types";
 import Account from "modules/Account";
+import React from "react";
+
+export const UserContext = React.createContext<User | undefined>(undefined);
 
 const AccountPage: NextPage = ({ usr }: any) => {
   const { data: session, status } = useSession();
@@ -29,9 +32,11 @@ const AccountPage: NextPage = ({ usr }: any) => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <Layout>
-        <Account user={user} />
-      </Layout>
+      <UserContext.Provider value={user}>
+        <Layout>
+          <Account />
+        </Layout>
+      </UserContext.Provider>
 
       <style global jsx>
         {`
