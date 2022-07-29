@@ -1,124 +1,156 @@
 import { Review, User } from "@prisma/client";
+import { format } from "date-fns";
 import { useSession } from "next-auth/react";
 import { useState } from "react";
-import { colors, shadows } from "theme/Styles";
-import DeleteButton from "./Buttons/DeleteButton";
-import EditButton from "./Buttons/EditButton";
-import StarBar from "./StarBar";
+import { Button, Card, Input, Modal, Rating } from "semantic-ui-react";
 
 const ReviewCard = ({ review, user }: { review: Review; user: User }) => {
-  const fontSize = 1.5;
   const { data: session, status } = useSession();
   const [editing, setEditing] = useState(false);
   const [rating, setRating] = useState(review.rating);
   const [comment, setComment] = useState<string>(review?.comment ?? "");
 
+  const handleSave = async () => {
+    if (rating != review.rating || comment != (review.comment ?? "")) {
+      await fetch(`/api/reviews/${review.id}/update`, {
+        method: "PUT",
+        body: JSON.stringify({
+          reviewId: review.id,
+          rating: rating,
+          comment: comment == "" ? null : comment,
+        }),
+      });
+      window.location.reload();
+    }
+  };
+
   return (
-    <>
-      <div className="review">
-        <StarBar
-          initalStars={rating}
-          size={`${fontSize}rem`}
-          editable={editing}
-          onChange={(newRating) => {
-            setRating(newRating);
+    <Card>
+      <Card.Content>
+        <Card.Header
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
           }}
-        />
-        {editing ? (
-          <label>
-            Comment
-            <input
-              value={comment}
-              onChange={(e) => {
-                setComment(e.target.value);
-              }}
+        >
+          <Rating
+            rating={rating}
+            maxRating={5}
+            icon="star"
+            size="huge"
+            disabled={!editing}
+            onRate={(_, { rating }) => setRating(rating as number)}
+          />
+
+          {status === "authenticated" && session.user.id == review.userId && (
+            <EditButtons
+              editing={editing}
+              setEditing={setEditing}
+              review={review}
+              onSave={handleSave}
             />
-          </label>
-        ) : review.comment != null ? (
-          <p className="comment">
-            <i>&quot;{review.comment}&quot;</i>
-          </p>
-        ) : (
-          <></>
-        )}
-        <i className="username">- {user.name}</i>
-        <div style={{ display: "flex", flexDirection: "column" }}>
-          <>Reviewd on the {review.reviewDate}</>
-          <br />
-          <>
-            {review.editDate != null ? (
-              <>Edited on the {review.editDate}</>
-            ) : (
-              <></>
-            )}
-          </>
-        </div>
+          )}
+        </Card.Header>
 
-        {status === "authenticated" && session.user.id == review.userId && (
-          <div className="buttons">
-            <EditButton
-              onEdit={() => {
-                setEditing(true);
-              }}
-              onSave={async () => {
-                setEditing(false);
-                if (
-                  rating != review.rating ||
-                  comment != (review.comment ?? "")
-                ) {
-                  await fetch(`/api/reviews/${review.id}/update`, {
-                    method: "PUT",
-                    body: JSON.stringify({
-                      reviewId: review.id,
-                      rating: rating,
-                      comment: comment == "" ? null : comment,
-                    }),
-                  });
-                  window.location.reload();
-                }
-              }}
-            />
-            <DeleteButton
-              onClick={async () => {
-                await fetch(`/api/reviews/${review.id}/delete`, {
-                  method: "DELETE",
-                });
-                window.location.reload();
-              }}
-            />
-          </div>
-        )}
-      </div>
+        <Card.Description>
+          {editing ? (
+            <Input
+              size="small"
+              fluid
+              onChange={(e, { value }) => setComment(value)}
+            >
+              <input value={comment} type="text" />
+            </Input>
+          ) : (
+            comment && (
+              <>
+                <i>"{comment}"</i> <br />
+              </>
+            )
+          )}
+          - {user.name}
+        </Card.Description>
 
-      <style jsx>{`
-        .review {
-          opacity: 90%;
-          background-color: ${colors.primary};
-          display: flex;
-          flex-direction: column;
-          gap: 0.5rem;
-          padding: 1rem;
-          box-shadow: ${shadows.boxShadow};
-          position: relative;
+        <Card.Meta>
+          Reviewd on the {format(new Date(review.reviewDate), "dd-mm-yyyy")}
+          {review.editDate && (
+            <>
+              <br />
+              Edited on the {format(new Date(review.editDate), "dd-mm-yyyy")}
+            </>
+          )}
+        </Card.Meta>
+      </Card.Content>
+    </Card>
+  );
+};
+
+const EditButtons = ({
+  review,
+  editing,
+  setEditing,
+  onSave,
+}: {
+  review: Review;
+  editing: boolean;
+  setEditing: (editing: boolean) => void;
+  onSave: () => void;
+}) => {
+  const [openDelete, setOpenDelete] = useState(false);
+
+  return (
+    <div>
+      <Button
+        icon={editing ? `save` : `edit`}
+        compact
+        onClick={() => {
+          setEditing(!editing);
+
+          if (editing) {
+            onSave();
+          }
+        }}
+      />
+
+      <Modal
+        onClose={() => setOpenDelete(false)}
+        onOpen={() => setOpenDelete(true)}
+        open={openDelete}
+        size="tiny"
+        dimmer="blurring"
+        trigger={
+          <Button
+            icon="trash"
+            negative
+            compact
+            onClick={() => setOpenDelete(true)}
+          />
         }
-
-        .comment {
-          font-size: ${fontSize}rem;
-          margin: 0;
-        }
-
-        .username {
-          font-size: ${0.9 * fontSize}rem;
-        }
-
-        .buttons {
-          position: absolute;
-          top: 8px;
-          right: 8px;
-          display: flex;
-        }
-      `}</style>
-    </>
+      >
+        <Modal.Header style={{ display: "flex", justifyContent: "center" }}>
+          Are you sure you want to delete this review?
+        </Modal.Header>
+        <Modal.Actions style={{ display: "flex", justifyContent: "center" }}>
+          <Button
+            content="Cancle"
+            icon="cancel"
+            onClick={() => setOpenDelete(false)}
+          />
+          <Button
+            content="Delete"
+            icon="trash"
+            negative
+            onClick={async () => {
+              await fetch(`/api/reviews/${review.id}/delete`, {
+                method: "DELETE",
+              });
+              window.location.reload();
+            }}
+          />
+        </Modal.Actions>
+      </Modal>
+    </div>
   );
 };
 

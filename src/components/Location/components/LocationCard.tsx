@@ -1,22 +1,18 @@
 import StarBar from "components/StarBar";
 import Image from "next/image";
+import { Button } from "semantic-ui-react";
 import { colors, shadows, stdPx } from "theme/Styles";
 import { LocationReview } from "types/LocationReview";
 import * as utils from "utils/LocationReviewUtils";
+import LocationModal from "./LocationModal";
 
-const LocationCard = ({
-  location,
-  handleChange,
-}: {
-  location: LocationReview;
-  handleChange: any;
-}) => {
+const LocationCard = ({ location }: { location: LocationReview }) => {
   const reviews = location.reviews;
   const titleSize = "2rem";
 
   return (
     <>
-      <article onClick={handleChange}>
+      <article>
         <Image
           src={location.image!}
           alt="image location"
@@ -40,9 +36,10 @@ const LocationCard = ({
             )}
           </div>
 
-          <button style={{ gridArea: "review", fontSize: "1.25rem" }}>
-            More Information
-          </button>
+          <LocationModal
+            location={location}
+            trigger={<Button content="More information" fluid />}
+          />
         </div>
       </article>
 

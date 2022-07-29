@@ -1,86 +1,103 @@
-import CloseButton from "components/Buttons/CloseButton";
 import ReviewCard from "components/ReviewCard";
-import StarBar from "components/StarBar";
-import Image from "next/image";
-import { colors, shadows, stdPx } from "theme/Styles";
-import * as utils from "utils/LocationReviewUtils";
-import { LocationReview } from "types/LocationReview";
 import Link from "next/link";
+import { ReactNode, useState } from "react";
+import {
+  Card,
+  Container,
+  Divider,
+  Grid,
+  Header,
+  Image,
+  Modal,
+  Rating,
+  Segment,
+} from "semantic-ui-react";
+import { LocationReview } from "types/LocationReview";
+import * as utils from "utils/LocationReviewUtils";
 import LeaveReview from "./LeaveReview";
-import FullscreenModal from "components/Modals/FullscreenModal";
 
 const LocationModal = ({
   location,
-  closeModal,
+  trigger,
 }: {
   location: LocationReview;
-  closeModal: () => void;
+  trigger: ReactNode;
 }) => {
   const reviews = location.reviews;
-  const lat = location.coordinates.coordinates[0];
-  const long = location.coordinates.coordinates[1];
+  const lat = location.coordinates?.coordinates[0];
+  const long = location.coordinates?.coordinates[1];
   const mapLink = `https://maps.google.com/?q=${lat},${long}`;
-  const titleSize = 4; //rem
+
+  const [open, setOpen] = useState(false);
 
   return (
-    <FullscreenModal
-      style={{ backgroundColor: colors.secondary, color: colors.text }}
-      closeModal={closeModal}
+    <Modal
+      onClose={() => setOpen(false)}
+      onOpen={() => setOpen(true)}
+      open={open}
+      trigger={trigger}
+      closeIcon
+      dimmer="blurring"
     >
-      <div className="content">
-        <div className="image" style={{ gridArea: "image" }}>
-          <Image
-            src={location.image!}
-            alt="image location"
-            layout={"intrinsic"}
-            width={400}
-            height={300}
-          />
-        </div>
+      <Modal.Header>{location.locationName}</Modal.Header>
 
-        <div style={{ gridArea: "titleDescription" }}>
-          <h1 className="locationName">{location.locationName}</h1>
+      <Modal.Content scrolling>
+        <Grid>
+          <Grid.Column width={8}>
+            <Segment>
+              <Modal.Description style={{ gridArea: "titleDescription" }}>
+                <Container fluid>
+                  <Header size="huge" className="locationName">
+                    {location.locationName}
+                  </Header>
 
-          <p className="description">
-            {location.description != null ? (
-              <>{location.description}</>
-            ) : (
-              "No description available."
-            )}
-            <br />
-            View on{" "}
-            <Link href={mapLink}>
-              <a target={"_blank"}>map</a>
-            </Link>
-            .
-          </p>
-        </div>
+                  <p className="description">
+                    {location.description != null ? (
+                      <>{location.description}</>
+                    ) : (
+                      "No description available."
+                    )}
+                    <br />
+                    View on{" "}
+                    <Link href={mapLink}>
+                      <a target={"_blank"}>map</a>
+                    </Link>
+                    .
+                  </p>
+                </Container>
+              </Modal.Description>
+            </Segment>
 
-        <LeaveReview location={location} />
+            <Container content={<LeaveReview location={location} />} />
+          </Grid.Column>
 
-        <div className="reviews" style={{ gridArea: "reviews" }}>
-          <h2 style={{ gridArea: "reviewTitle" }}>
-            Reviews ({reviews.length})
-          </h2>
+          <Grid.Column width={8}>
+            <Segment content={<Image fluid src={location.image} />} />
+          </Grid.Column>
+        </Grid>
 
-          <div
+        <Segment>
+          <Header
+            size="huge"
             style={{
-              gridArea: "rating",
-              justifySelf: "end",
-              alignSelf: "center",
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
             }}
           >
-            {reviews.length == 0 ? (
-              <>? / 5</>
-            ) : (
-              <StarBar
-                initalStars={utils.averageRating(location)}
-                size={`${titleSize / 2}rem`}
-              />
-            )}
-          </div>
+            Reviews ({reviews.length}){" "}
+            <Rating
+              defaultRating={utils.averageRating(location)}
+              maxRating={5}
+              disabled
+              icon="star"
+              size="massive"
+            />
+          </Header>
 
-          <div className="reviewContainer">
+          <Divider />
+
+          <Card.Group>
             {reviews.map((review) => {
               return (
                 <ReviewCard
@@ -90,58 +107,10 @@ const LocationModal = ({
                 />
               );
             })}
-          </div>
-        </div>
-      </div>
-
-      <style jsx>{`
-        * {
-          margin: 0;
-          padding: 0;
-        }
-
-        .content {
-          height: 100%;
-          background-color: ${colors.secondary};
-          display: grid;
-          grid-template-areas:
-            "titleDescription image"
-            "leaveReview leaveReview"
-            "reviews reviews";
-
-          grid-template-columns: 1fr 2fr;
-        }
-
-        .content > *:not(:first-child) {
-          padding: ${stdPx(2)};
-        }
-        .reviewHeading {
-          font-size: ${0.5 * titleSize}rem;
-        }
-
-        .image {
-          position: relative;
-          display: grid;
-          justify-content: end;
-        }
-
-        .reviews {
-          display: grid;
-          gap: ${stdPx(0.5)};
-          grid-template-areas:
-            "reviewTitle rating"
-            "reviewContainer reviewContainer";
-        }
-
-        .reviewContainer {
-          grid-area: "reviewContainer";
-          display: flex;
-          gap: ${stdPx()};
-          flex-wrap: wrap;
-          justify-content: space-between;
-        }
-      `}</style>
-    </FullscreenModal>
+          </Card.Group>
+        </Segment>
+      </Modal.Content>
+    </Modal>
   );
 };
 
