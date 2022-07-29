@@ -14,7 +14,7 @@ import {
 } from "semantic-ui-react";
 import { LocationReview } from "types/LocationReview";
 import * as utils from "utils/LocationReviewUtils";
-import LeaveReview from "./LeaveReview";
+import LeaveReview from "components/LeaveReview";
 
 const LocationModal = ({
   location,
@@ -39,7 +39,9 @@ const LocationModal = ({
       closeIcon
       dimmer="blurring"
     >
-      <Modal.Header>{location.locationName}</Modal.Header>
+      <Modal.Header>
+        <Header size="large">{location.locationName}</Header>
+      </Modal.Header>
 
       <Modal.Content scrolling>
         <Grid>

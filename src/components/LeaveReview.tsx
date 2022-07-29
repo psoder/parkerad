@@ -1,10 +1,8 @@
-import StarBar from "components/StarBar";
+import type { Location } from "@prisma/client";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useState } from "react";
-import { stdPx } from "theme/Styles";
-import type { Location } from "@prisma/client";
-import { Card, Container, Form, Rating, Segment } from "semantic-ui-react";
+import { Card, Form, Rating } from "semantic-ui-react";
 
 const LeaveReview = ({ location }: { location: Location }) => {
   const { status } = useSession();

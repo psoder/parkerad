@@ -1,4 +1,4 @@
-import Location from "components/Location";
+import LocationCard from "components/LocationCard";
 import { LocationReview } from "types/LocationReview";
 import { useEffect, useState } from "react";
 import { getComparitor, Comparitor } from "utils/LocationReviewUtils";
@@ -6,6 +6,7 @@ import { stdPx } from "theme/Styles";
 import AddLocation from "./Components/AddLocation";
 import Filter from "./Components/Filter";
 import Sort from "./Components/Sort";
+import { Card } from "semantic-ui-react";
 
 const Locations = ({ locations }: { locations: LocationReview[] }) => {
   const [fslocations, setFSLocations] = useState(locations);
@@ -48,11 +49,11 @@ const Locations = ({ locations }: { locations: LocationReview[] }) => {
         <AddLocation />
       </div>
 
-      <div className="locations">
+      <Card.Group>
         {fslocations.map((location) => (
-          <Location key={location.id} location={location} />
+          <LocationCard key={location.id} location={location} />
         ))}
-      </div>
+      </Card.Group>
       <style jsx>
         {`
           h1 {
@@ -63,12 +64,6 @@ const Locations = ({ locations }: { locations: LocationReview[] }) => {
             flex-direction: row;
             gap: ${stdPx(2)};
             margin-bottom: ${stdPx(1.5)};
-          }
-
-          .locations {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 1.5rem;
           }
         `}
       </style>

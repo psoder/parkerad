@@ -8,7 +8,7 @@ import {
 } from "semantic-ui-react";
 import { LocationReview } from "types/LocationReview";
 import * as utils from "utils/LocationReviewUtils";
-import LocationModal from "./LocationModal";
+import LocationModal from "components/LocationModal";
 
 const LocationCard = ({ location }: { location: LocationReview }) => {
   return (
