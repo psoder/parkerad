@@ -6,7 +6,7 @@ import { stdPx } from "theme/Styles";
 import AddLocation from "./Components/AddLocation";
 import Filter from "./Components/Filter";
 import Sort from "./Components/Sort";
-import { Card } from "semantic-ui-react";
+import { Button, Card } from "semantic-ui-react";
 
 const Locations = ({ locations }: { locations: LocationReview[] }) => {
   const [fslocations, setFSLocations] = useState(locations);
@@ -46,7 +46,7 @@ const Locations = ({ locations }: { locations: LocationReview[] }) => {
 
         <Sort onChange={handleChange} />
 
-        <AddLocation />
+        <AddLocation trigger={<Button content="Add Location" />} />
       </div>
 
       <Card.Group>

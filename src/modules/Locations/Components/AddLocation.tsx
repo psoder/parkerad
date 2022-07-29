@@ -1,127 +1,50 @@
-import AccessDenied from "components/AccessDenied";
-import FullscreenModal from "components/Modals/FullscreenModal";
 import { useSession } from "next-auth/react";
-import React, { useEffect, useRef, useState } from "react";
-import { colors, stdPx } from "theme/Styles";
+import Link from "next/link";
+import { ReactNode, useRef, useState } from "react";
+import {
+  Button,
+  Form,
+  Header,
+  Icon,
+  Image,
+  Modal,
+  Segment,
+} from "semantic-ui-react";
 import { uploadImage } from "utils/APIUtils";
+import { isValidCoordinate } from "utils/LocationUtils";
 
-const AddLocation = () => {
-  const [showModal, setShowModal] = useState(false);
+const AddLocation = ({ trigger }: { trigger: ReactNode }) => {
+  const [open, setOpen] = useState(false);
   const { status } = useSession();
-
-  const handleClick = (e: any) => {
-    setShowModal(!showModal);
-  };
-
-  return (
-    <>
-      <div>
-        <button onClick={handleClick}>
-          <h2>Add Location</h2>
-        </button>
-        <style jsx>{`
-          h2 {
-            margin: 0;
-          }
-          div {
-            display: flex;
-          }
-        `}</style>
-      </div>
-
-      {showModal && (
-        <FullscreenModal
-          closeModal={() => {
-            setShowModal(false);
-          }}
-          style={{ backgroundColor: colors.secondary, color: colors.text }}
-        >
-          {status !== "authenticated" ? (
-            <AccessDenied toMessage="add a location" />
-          ) : (
-            <Input />
-          )}
-        </FullscreenModal>
-      )}
-    </>
-  );
-};
-
-const Input = () => {
-  const [state, setState] = useState<{
-    locationName: string;
-    longitude: number;
-    latitude: number;
-    description?: string;
-    image?: File;
-  }>({
-    locationName: "",
-    longitude: 0,
-    latitude: 0,
-    image: undefined,
+  const [locationName, setLocationName] = useState("");
+  const [description, setDescription] = useState("");
+  const [coordinates, setCoordinates] = useState({
+    latitude: "",
+    longitude: "",
   });
-  const [allowSubmit, setAllowSubmit] = useState(false);
-  const fileInput = useRef(null);
 
-  useEffect(() => {
-    const allow = () => {
-      if (state.locationName == "") {
-        return false;
-      }
-
-      if (state.longitude < -180 || state.longitude > 180) {
-        return false;
-      }
-
-      if (state.latitude < -180 || state.latitude > 180) {
-        return false;
-      }
-
-      return true;
-    };
-
-    setAllowSubmit(allow());
-  }, [state.locationName, state.latitude, state.longitude]);
-
-  const handleChange = (event: any) => {
-    if (event.target.name === "image") {
-      setState({
-        ...state,
-        image: event.target.files[0],
-      });
-    } else {
-      setState({
-        ...state,
-        [event.target.name]: event.target.value,
-      });
-    }
-  };
-
-  const handleClearImage = () => {
-    setState({ ...state, image: undefined });
-  };
+  const [image, setImage] = useState<File>();
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const handleSubmit = async (event: any) => {
     event?.preventDefault();
 
     let imageKey: string | null = null;
-
-    if (state.image) {
-      imageKey = await uploadImage(state.image).then((key) => {
+    if (image) {
+      imageKey = await uploadImage(image).then((key) => {
         return key;
       });
       console.log(imageKey);
-    }
-
-    if (imageKey == null) {
-      return;
     }
 
     // Create location
     await fetch("/api/locations/create", {
       method: "POST",
       body: JSON.stringify({
-        ...state,
+        locationName: locationName,
+        description: description,
+        latitud: coordinates.latitude,
+        longitude: coordinates.longitude,
         image: imageKey,
       }),
     }).then((res) => {
@@ -131,86 +54,130 @@ const Input = () => {
     window.location.reload();
   };
 
+  if (status !== "authenticated") {
+    return (
+      <Modal
+        onClose={() => setOpen(false)}
+        onOpen={() => setOpen(true)}
+        open={open}
+        trigger={trigger}
+      >
+        <Modal.Header>Add a location</Modal.Header>
+        <Modal.Content>You must be signed in to add a location.</Modal.Content>
+        <Modal.Actions>
+          <Button
+            icon="cancel"
+            content="Cancel"
+            negative
+            onClick={() => setOpen(false)}
+          />
+          <Link href="/api/auth/signin">
+            <Button icon="sign in" positive content="Sign in" />
+          </Link>
+        </Modal.Actions>
+      </Modal>
+    );
+  }
+
   return (
-    <div className="root">
-      <h1>Add Location</h1>
-      <form onSubmit={handleSubmit}>
-        <label>
-          Name*
-          <input
-            name="locationName"
-            value={state.locationName}
-            onChange={handleChange}
-          ></input>
-        </label>
-        <label>
-          Longitude*
-          <input
-            type="number"
-            value={state.longitude}
-            name="longitude"
-            placeholder="Longitude"
-            onChange={handleChange}
-          />
-        </label>
-        <label>
-          Latitude*
-          <input
-            type="number"
-            value={state.latitude}
-            name="latitude"
-            placeholder="Latitude"
-            onChange={handleChange}
-          />
-        </label>
-        <label>
-          Description
-          <input
-            type="text"
-            name="description"
-            value={state.description || ""}
-            onChange={handleChange}
-          />
-        </label>
-        <label>
-          Image
-          <input
-            name="image"
-            type="file"
-            ref={fileInput}
-            accept="image/*"
-            // value={fileInput.current?.files[0].name || ""}
-            onChange={handleChange}
-          />
-          <input type="button" value="Clear" onClick={handleClearImage} />
-        </label>
-        <input type="submit" value="Add Location" disabled={!allowSubmit} />
-      </form>
+    <Modal
+      onClose={() => setOpen(false)}
+      onOpen={() => setOpen(true)}
+      open={open}
+      trigger={trigger}
+      dimmer="blurring"
+    >
+      <Modal.Header>
+        <Header size="large">Add a location</Header>
+      </Modal.Header>
 
-      <style jsx>{`
-        .root {
-          display: flex;
-          flex-direction: column;
-          justify-content: center;
-          align-items: center;
-        }
+      <Modal.Content scrolling>
+        <Form>
+          <Form.Input
+            required
+            label="Location name"
+            value={locationName}
+            onChange={(_, { value }) => setLocationName(value)}
+          />
 
-        h1 {
-          font-size: 3rem;
-          justify-self: start;
-        }
+          <Form.TextArea
+            label="Description"
+            value={description}
+            onChange={(_, { value }) => setDescription(`${value}`)}
+          />
 
-        form {
-          display: flex;
-          flex-direction: column;
-        }
+          <Form.Group widths="equal">
+            <Form.Input
+              label="Latitude"
+              type="number"
+              error={!isValidCoordinate(+coordinates.latitude)}
+              value={coordinates?.latitude || ""}
+              onChange={(_, { value }) =>
+                setCoordinates({ ...coordinates, latitude: value })
+              }
+            />
+            <Form.Input
+              label="Longitude"
+              type="number"
+              error={!isValidCoordinate(+coordinates.longitude)}
+              value={coordinates?.longitude || ""}
+              onChange={(_, { value }) =>
+                setCoordinates({ ...coordinates, longitude: value })
+              }
+            />
+          </Form.Group>
 
-        label {
-          display: flex;
-          justify-content: space-between;
-        }
-      `}</style>
-    </div>
+          <Segment placeholder={image == undefined}>
+            {image ? (
+              <Image src={URL.createObjectURL(image!)} rounded />
+            ) : (
+              <>
+                <Header icon>
+                  <Icon name="file image outline" />
+                  No image selected.
+                </Header>
+                <Button
+                  primary
+                  onClick={async () => inputRef.current?.click()}
+                  content="Upload Image"
+                />
+                <input
+                  ref={inputRef}
+                  type="file"
+                  accept="image/*"
+                  style={{ display: "none" }}
+                  onChange={(e) => {
+                    setImage(e.target.files![0]);
+                  }}
+                />
+              </>
+            )}
+          </Segment>
+        </Form>
+      </Modal.Content>
+
+      <Modal.Actions>
+        {image && (
+          <Button
+            icon="repeat"
+            content="Reset image"
+            onClick={() => setImage(undefined)}
+          />
+        )}
+        <Button
+          icon="cancel"
+          negative
+          content="Cancel"
+          onClick={() => setOpen(false)}
+        />
+        <Button
+          icon="check"
+          positive
+          content="Add location"
+          onClick={(e) => handleSubmit(e)}
+        />
+      </Modal.Actions>
+    </Modal>
   );
 };
 

@@ -26,22 +26,25 @@ export default async function handler(
 
   const body = JSON.parse(req.body);
 
-  if (
-    !isValidCoordinate(+body.latitude) ||
-    !isValidCoordinate(+body.longitude)
-  ) {
-    // return res.status(400).json();
+  console.log(body);
+
+  let coordinates: { type: string; coordinates: number[] } | undefined;
+
+  if (isValidCoordinate(+body.latitude) && isValidCoordinate(+body.longitude)) {
+    coordinates = {
+      type: "point",
+      coordinates: [+body.latitude, +body.longitude],
+    };
+  } else if (body.latitude && body.longitude) {
+    return res.status(400).send("Invalid coordinates");
   }
 
   const location = await prisma.location.create({
     data: {
       locationName: body.locationName,
-      coordinates: {
-        type: "point",
-        coordinates: [+body.latitude, +body.longitude],
-      },
-      description: body.description,
-      image: body.image || null,
+      coordinates: coordinates || undefined,
+      description: body.description || undefined,
+      image: body.image || undefined,
       addedById: token?.sub!,
     },
   });

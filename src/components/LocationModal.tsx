@@ -60,11 +60,15 @@ const LocationModal = ({
                       "No description available."
                     )}
                     <br />
-                    View on{" "}
-                    <Link href={mapLink}>
-                      <a target={"_blank"}>map</a>
-                    </Link>
-                    .
+                    {lat && long && (
+                      <>
+                        View on{" "}
+                        <Link href={mapLink}>
+                          <a target={"_blank"}>map</a>
+                        </Link>
+                        .
+                      </>
+                    )}
                   </p>
                 </Container>
               </Modal.Description>
