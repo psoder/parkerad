@@ -14,11 +14,12 @@ const LocationRow = ({ location }: { location: Location }) => {
     longitude: location.coordinates?.coordinates[1],
   });
 
-  const avgRating = location.reviews
-          .map((rev) => rev.rating)
-          .reduce((acc, curr) => {
-            return acc + curr;
-          }, 0) / location.reviews.length 
+  const avgRating =
+    location.reviews
+      .map((rev) => rev.rating)
+      .reduce((acc, curr) => {
+        return acc + curr;
+      }, 0) / location.reviews.length;
 
   const handleChange = (e: any) => {
     setState({ ...state, [e.target.name]: e.target.value });
@@ -113,7 +114,7 @@ const LocationRow = ({ location }: { location: Location }) => {
       <Table.Cell>{location.reviews.length}</Table.Cell>
 
       <Table.Cell>
-          <Rating rating={avgRating} disabled maxRating={5} icon="star" />
+        <Rating rating={avgRating} disabled maxRating={5} icon="star" />
       </Table.Cell>
 
       <Table.Cell>

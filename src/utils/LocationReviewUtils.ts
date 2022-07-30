@@ -17,7 +17,11 @@ export const averageRating = (locationReview: LocationReview) => {
   );
 };
 
-export type Comparitor = "rating" | "weightedRating" | "noRatings" | "dateAdded";
+export type Comparitor =
+  | "rating"
+  | "weightedRating"
+  | "noRatings"
+  | "dateAdded";
 
 /**
  * Returns a comparitor for `LocationReview`s based on the provided enum.

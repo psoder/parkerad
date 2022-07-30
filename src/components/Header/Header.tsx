@@ -1,9 +1,9 @@
 import { signIn, signOut, useSession } from "next-auth/react";
 import Link from "next/link";
-import { Icon, Menu } from "semantic-ui-react";
+import { Icon, Image, Menu } from "semantic-ui-react";
 
 const Header = () => {
-  const { status } = useSession();
+  const { data: session, status } = useSession();
 
   return (
     <Menu
@@ -37,6 +37,13 @@ const Header = () => {
           </Menu.Item>
         </Link>
 
+        <Link href={"/users"}>
+          <Menu.Item>
+            <Icon name="users" size="large" />
+            Users
+          </Menu.Item>
+        </Link>
+
         <Menu.Item href="https://github.com/fipplarna/parkerad" target="_blank">
           <Icon name="github" size="large" />
           Github
@@ -53,7 +60,11 @@ const Header = () => {
           <>
             <Link href={"/account"}>
               <Menu.Item>
-                <Icon name="user" size="large" />
+                {session.user.image ? (
+                  <Image avatar src={session.user.image} />
+                ) : (
+                  <Icon name="user" size="large" />
+                )}
                 Account
               </Menu.Item>
             </Link>
