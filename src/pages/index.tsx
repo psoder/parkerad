@@ -60,7 +60,7 @@ export const getServerSideProps: GetServerSideProps = async () => {
     location.image =
       location.image == null
         ? (location.image = "/images/bench.jpg")
-        : (location.image = `${process.env.IMG_SRC}/${location.image}`);
+        : (location.image = `https://${process.env.IMG_DOMAIN}/${location.image}`);
   });
 
   return {
