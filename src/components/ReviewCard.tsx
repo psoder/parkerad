@@ -25,7 +25,7 @@ const ReviewCard = ({ review, user }: { review: Review; user: User }) => {
   };
 
   return (
-    <Card>
+    <Card raised>
       <Card.Content>
         <Card.Header
           style={{

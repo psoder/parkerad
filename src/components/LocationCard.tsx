@@ -12,7 +12,7 @@ import LocationModal from "components/LocationModal";
 
 const LocationCard = ({ location }: { location: LocationReview }) => {
   return (
-    <Card image>
+    <Card raised>
       <Image
         src={location.image!}
         alt="Image of location"
