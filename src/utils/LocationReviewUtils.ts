@@ -17,12 +17,7 @@ export const averageRating = (locationReview: LocationReview) => {
   );
 };
 
-export enum Comparitor {
-  RATING = "rating",
-  WEIGHTED_RATING = "weightedRating",
-  NO_RATINGS = "noRatings",
-  DATE_ADDED = "dateAdded",
-}
+export type Comparitor = "rating" | "weightedRating" | "noRatings" | "dateAdded";
 
 /**
  * Returns a comparitor for `LocationReview`s based on the provided enum.
@@ -35,12 +30,12 @@ export function getComparitor(
 ): (a: LocationReview, b: LocationReview) => number {
   switch (comparitor) {
     default:
-    case Comparitor.RATING:
+    case "rating":
       return (a: LocationReview, b: LocationReview) => {
         return averageRating(a) - averageRating(b);
       };
 
-    case Comparitor.WEIGHTED_RATING:
+    case "weightedRating":
       return (a: LocationReview, b: LocationReview) => {
         const reviewSum = (reviews: Review[]) => {
           return reviews.reduce((acc, review) => acc + review.rating, 0);
@@ -48,12 +43,12 @@ export function getComparitor(
         return reviewSum(a.reviews) - reviewSum(b.reviews);
       };
 
-    case Comparitor.NO_RATINGS:
+    case "noRatings":
       return (a: LocationReview, b: LocationReview) => {
         return a.reviews.length - b.reviews.length;
       };
 
-    case Comparitor.DATE_ADDED:
+    case "dateAdded":
       return (a: LocationReview, b: LocationReview) => {
         return (
           new Date(a.dateAdded).getTime() - new Date(b.dateAdded).getTime()

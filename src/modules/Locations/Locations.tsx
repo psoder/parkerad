@@ -1,29 +1,30 @@
 import LocationCard from "components/LocationCard";
-import { LocationReview } from "types/LocationReview";
 import { useEffect, useState } from "react";
-import { getComparitor, Comparitor } from "utils/LocationReviewUtils";
-import { stdPx } from "theme/Styles";
+import {
+  Button,
+  Card,
+  Container,
+  Divider,
+  Dropdown,
+  Header,
+  Input,
+  Menu,
+  Search,
+  Segment,
+} from "semantic-ui-react";
+import { LocationReview } from "types/LocationReview";
+import { Comparitor, getComparitor } from "utils/LocationReviewUtils";
 import AddLocation from "./Components/AddLocation";
-import Filter from "./Components/Filter";
-import Sort from "./Components/Sort";
-import { Button, Card } from "semantic-ui-react";
 
 const Locations = ({ locations }: { locations: LocationReview[] }) => {
   const [fslocations, setFSLocations] = useState(locations);
-  const [search, setSearch] = useState<{
+  const [query, setQuery] = useState<{
     filter: string;
     comparitor: Comparitor;
   }>({
     filter: "",
-    comparitor: Comparitor.RATING,
+    comparitor: "rating",
   });
-
-  const handleChange = (e: any) => {
-    setSearch({
-      ...search,
-      [e.target.name]: e.target.value,
-    });
-  };
 
   useEffect(() => {
     setFSLocations(
@@ -31,43 +32,86 @@ const Locations = ({ locations }: { locations: LocationReview[] }) => {
         .filter((location) => {
           return location.locationName
             .toLowerCase()
-            .match(search.filter.toLowerCase());
+            .match(query.filter.toLowerCase());
         })
-        .sort(getComparitor(search.comparitor))
+        .sort(getComparitor(query.comparitor))
         .reverse()
     );
-  }, [search]);
+  }, [query]);
+
+  const options = [
+    {
+      key: "Rating",
+      text: "Rating",
+      value: "rating",
+    },
+    {
+      key: "Weighted rating",
+      text: "Weighted rating",
+      value: "weightedRating",
+    },
+    {
+      key: "Date added",
+      text: "Date added",
+      value: "dateAdded",
+    },
+    {
+      key: "Number of ratings",
+      text: "Number of ratings",
+      value: "noRatings",
+    },
+  ];
 
   return (
-    <section id="locations">
-      <h1>Locations</h1>
-      <div className="options">
-        <Filter onChange={handleChange} filter={search.filter} />
+    <Container style={{ paddingTop: "3em", paddingBottom: "3em" }}>
+      <Segment raised>
+        <Header size="huge">Locations</Header>
+        <Menu widths={3} borderless>
+          <Menu.Item>
+            <Dropdown
+              style={{ marginLeft: 30, marginRight: 30 }}
+              fluid
+              placeholder="Sort Locations"
+              selection
+              onChange={(_, { value }) =>
+                setQuery({ ...query, comparitor: value as Comparitor })
+              }
+              options={options}
+              defaultValue={options[0].value}
+            />
+          </Menu.Item>
 
-        <Sort onChange={handleChange} />
+          <Menu.Item>
+            <Input
+              style={{ marginLeft: 30, marginRight: 30 }}
+              icon="search"
+              placeholder="Search..."
+              onChange={(_, { value }) => setQuery({ ...query, filter: value })}
+            />
+          </Menu.Item>
 
-        <AddLocation trigger={<Button content="Add Location" />} />
-      </div>
+          <Menu.Item>
+            <AddLocation
+              trigger={
+                <Button
+                  style={{ marginLeft: 30, marginRight: 30 }}
+                  fluid
+                  content="Add Location"
+                />
+              }
+            />
+          </Menu.Item>
+        </Menu>
 
-      <Card.Group>
-        {fslocations.map((location) => (
-          <LocationCard key={location.id} location={location} />
-        ))}
-      </Card.Group>
-      <style jsx>
-        {`
-          h1 {
-            margin: ${stdPx()} 0 ${stdPx()} 0;
-          }
-          .options {
-            display: flex;
-            flex-direction: row;
-            gap: ${stdPx(2)};
-            margin-bottom: ${stdPx(1.5)};
-          }
-        `}
-      </style>
-    </section>
+        <Divider />
+
+        <Card.Group centered>
+          {fslocations.map((location) => (
+            <LocationCard key={location.id} location={location} />
+          ))}
+        </Card.Group>
+      </Segment>
+    </Container>
   );
 };
 
