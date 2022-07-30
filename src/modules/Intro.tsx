@@ -1,27 +1,17 @@
-import Image from "next/image";
 import Link from "next/link";
-import { colors, shadows } from "theme/Styles";
+import { Container, Header, Icon, Segment } from "semantic-ui-react";
 
 const Intro = () => {
   return (
-    <section id="intro">
-      <div className="title">
-        <h1>Parkerad</h1>
-        <h2>A very catchy slogan about benches</h2>
-      </div>
+    <div id="intro">
+      <Segment>
+        <Header size="huge">Parkerad</Header>
+        <Header.Subheader>A very catchy slogan about benches</Header.Subheader>
+      </Segment>
 
       <div>
         <Link href="/#locations">
-          <a>
-            <Image
-              src="/icons/arrow-down.png"
-              width={64}
-              height={64}
-              alt="down arrow"
-              layout="fixed"
-              style={{ filter: "invert(66%)" }}
-            />
-          </a>
+          <Icon color="grey" size="huge" name="chevron down" />
         </Link>
       </div>
 
@@ -39,26 +29,10 @@ const Intro = () => {
           grid-template-rows: 1fr auto;
           justify-content: center;
           align-items: center;
-        }
-
-        .title {
-          padding: 1.5rem;
-          background-color: ${colors.primary};
-          box-shadow: ${shadows.boxShadow};
-        }
-
-        h1 {
-          font-size: 3.5rem;
-          margin: 0;
-          color: ${colors.secondary};
-        }
-
-        h2 {
-          font-size: 2rem;
-          margin: 0;
+          padding: 50px;
         }
       `}</style>
-    </section>
+    </div>
   );
 };
 

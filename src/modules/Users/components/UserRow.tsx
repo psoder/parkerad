@@ -3,9 +3,12 @@ import { User } from "modules/Users/types";
 import { Rating, Table } from "semantic-ui-react";
 
 const UserRow = ({ user }: { user: User }) => {
-  const avgRating =
-    user.reviews.map((r) => r.rating).reduce((acc, curr) => acc + curr) /
-    user.reviews.length;
+  let avgRating = 0;
+  if (user.reviews.length > 0) {
+    avgRating =
+      user.reviews.map((r) => r.rating).reduce((acc, curr) => acc + curr) /
+      user.reviews.length;
+  }
 
   return (
     <Table.Row>

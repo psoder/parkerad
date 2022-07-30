@@ -1,14 +1,13 @@
+import Layout from "components/Layout";
+import prisma from "lib/prisma";
+import Intro from "modules/Intro";
+import Locations from "modules/Locations";
 import type {
   GetServerSideProps,
-  NextPage,
+  NextPage
 } from "next";
 import Head from "next/head";
-import Locations from "modules/Locations";
-import prisma from "lib/prisma";
 import type { LocationReview } from "types/LocationReview";
-import Intro from "modules/Intro";
-import Layout from "components/Layout";
-import { createSampleData } from "utils/SampleData";
 
 const Home: NextPage = ({ locations }: any) => {
   return (
