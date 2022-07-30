@@ -9,6 +9,7 @@ import {
   Header,
   Input,
   Menu,
+  Placeholder,
   Search,
   Segment,
 } from "semantic-ui-react";
@@ -63,7 +64,7 @@ const Locations = ({ locations }: { locations: LocationReview[] }) => {
   ];
 
   return (
-    <Container style={{ paddingTop: "3em", paddingBottom: "3em" }}>
+    <Container style={{ paddingTop: "3em", paddingBottom: "3em" }} id="locations">
       <Segment raised>
         <Header size="huge">Locations</Header>
         <Menu widths={3} borderless>
@@ -109,6 +110,12 @@ const Locations = ({ locations }: { locations: LocationReview[] }) => {
           {fslocations.map((location) => (
             <LocationCard key={location.id} location={location} />
           ))}
+
+          {fslocations.length == 0 && (
+            <Container text textAlign="center" style={{ padding: 100 }}>
+              <Header>No locations match the search criteria</Header>
+            </Container>
+          )}
         </Card.Group>
       </Segment>
     </Container>

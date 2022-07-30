@@ -1,6 +1,6 @@
 import { Location } from "modules/Account/types";
 import { useState } from "react";
-import { Button, Image, Input, Modal, Table } from "semantic-ui-react";
+import { Button, Image, Input, Modal, Rating, Table } from "semantic-ui-react";
 import { format } from "date-fns";
 import { isValidCoordinate } from "utils/LocationUtils";
 import UploadImage from "./UploadImage";
@@ -13,6 +13,12 @@ const LocationRow = ({ location }: { location: Location }) => {
     latitude: location.coordinates?.coordinates[0],
     longitude: location.coordinates?.coordinates[1],
   });
+
+  const avgRating = location.reviews
+          .map((rev) => rev.rating)
+          .reduce((acc, curr) => {
+            return acc + curr;
+          }, 0) / location.reviews.length 
 
   const handleChange = (e: any) => {
     setState({ ...state, [e.target.name]: e.target.value });
@@ -107,11 +113,7 @@ const LocationRow = ({ location }: { location: Location }) => {
       <Table.Cell>{location.reviews.length}</Table.Cell>
 
       <Table.Cell>
-        {location.reviews
-          .map((rev) => rev.rating)
-          .reduce((acc, curr) => {
-            return acc + curr;
-          }, 0) / location.reviews.length || "-"}
+          <Rating rating={avgRating} disabled maxRating={5} icon="star" />
       </Table.Cell>
 
       <Table.Cell>

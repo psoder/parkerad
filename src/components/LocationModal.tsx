@@ -77,8 +77,11 @@ const LocationModal = ({
             <Container content={<LeaveReview location={location} />} />
           </Grid.Column>
 
-          <Grid.Column width={8}>
-            <Segment content={<Image fluid src={location.image} />} />
+          <Grid.Column
+            width={8}
+            style={{ display: "flex", alignItems: "center" }}
+          >
+            <Image fluid src={location.image} rounded />
           </Grid.Column>
         </Grid>
 
@@ -113,6 +116,12 @@ const LocationModal = ({
                 />
               );
             })}
+
+            {reviews.length == 0 && (
+              <Container text textAlign="center" style={{ padding: 75 }}>
+                <Header>No reviews exists for this location</Header>
+              </Container>
+            )}
           </Card.Group>
         </Segment>
       </Modal.Content>
